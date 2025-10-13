@@ -19,15 +19,30 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    category_id: {
-      type: String,
-      required: true,
-      reference: {
-        model: "Category",
-        key: "ObjectId",
+    categories: 
+    [
+      { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Category', 
+        required: true 
+      }
+    ],
+    images: 
+    [
+      {
+        type: String, 
+        trim: true,
       },
+    ],
+    seller: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
-    imageUrl: String,
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
