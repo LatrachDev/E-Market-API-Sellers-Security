@@ -10,9 +10,9 @@ Developed by **Team YouCreative** at **YouCode Nador**, this version transforms 
 | Name | Role |
 |------|------|
 | **Mohammed Latrach** | Full Stack Developer / Project Lead |
-| **Ayoub Jebbouri** | Backend Developer |
-| **Ikram El Benellali** | Backend Developer |
-| **Meriem El Mecaniqui** | Backend Developer |
+| **Ayoub Jebbouri** | Full Stack Developer |
+| **Ikram El Benellali** | Full Stack Developer |
+| **Meriem El Mecaniqui** | Full Stack Developer |
 
 ---
 
