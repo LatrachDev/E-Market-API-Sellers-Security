@@ -6,10 +6,10 @@ const controller = new ViewsController();
 router.post('/:productId/review', controller.createView);
 
 router.get('/:productId/review', controller.getAllViews);
-router.put('/:productId/review/:id', controller.updateView);
+// router.put('/:productId/review/:id', controller.updateView);
 
 
-router.delete('/:productId/review/:id', controller.deleteView);
+// router.delete('/:productId/review/:id', controller.deleteView);
 
 
 

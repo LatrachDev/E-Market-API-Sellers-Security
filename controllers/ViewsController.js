@@ -1,6 +1,7 @@
 const View = require('../models/Views');
 class ViewsController {
     createView = async (req, res) => {
+        console.log("test",req.params.id);
         try {
             const view = await View.findOne({
                 userId: req.user.id,
@@ -26,7 +27,7 @@ class ViewsController {
 
         }
         catch (err) {
-            res.status(500).json({ message: err.errors });
+            res.status(500).json({ message: err.message });
         }
     }
     getAllViews = async (req, res) => {
@@ -46,7 +47,9 @@ class ViewsController {
         }
     }
     updateUserView=async(req,res)=>{
+
         try{
+            const Updated= await View.findOneAndUpdate()
 
         }
         catch(err){
