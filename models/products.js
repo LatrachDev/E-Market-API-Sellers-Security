@@ -43,10 +43,14 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-  },
-  {
-    timestamps: true,
-  }
+    deletedAt: {
+    type: Date,
+    default: null,
+    }
+},
+{
+  timestamps: true,
+}
 );
 
 module.exports = mongoose.model("Product", productSchema);

@@ -9,8 +9,16 @@ const categorySchema = new mongoose.Schema({
     description: {
         type: String,
         required: true
+    },
+    deletedAt: {
+        type: Date,
+        default: null
     }
-});
+},
+{
+    timestamps: true
+}
+);
 
 
 module.exports = mongoose.model('Category', categorySchema);
