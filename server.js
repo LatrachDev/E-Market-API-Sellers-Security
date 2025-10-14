@@ -7,6 +7,7 @@ const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
+const ViewsRoutes=require('./routes/viewsRoutes');
 require("dotenv").config();
 const app = express();
 app.use(express.json());
@@ -37,6 +38,7 @@ const options = {
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
+app.use("/product",ViewsRoutes); 
 
 const specs = swaggerJsdoc(options);
 app.use(
@@ -45,8 +47,10 @@ app.use(
   swaggerUi.setup(specs, { explorer: true})
 );
 
+// 
 
-app.use(require('./middlewares/notFound'));
+
+
 
 async function run() {
   try {
