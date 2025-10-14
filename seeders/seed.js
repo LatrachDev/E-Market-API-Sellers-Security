@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const mongoose = require('mongoose');
 const connectDB = require('../config/db');
 const bcrypt = require('bcrypt');
@@ -61,6 +61,9 @@ async function seed() {
         ];
         const users = await User.insertMany(usersData);
         console.log(`Inserted ${users.length} users`);
+        const userByName = Object.fromEntries(
+            users.map((u) => [u.fullname, u._id])
+        );
 
         const productsData = [
             {
@@ -68,32 +71,36 @@ async function seed() {
                 description: 'Latest Apple smartphone',
                 price: 999,
                 stock: 15,
-                category: categoryByName['Electronics'],
-                imageUrl: 'https://example.com/images/iphone15.jpg',
+                seller: userByName['Jane Doe'],
+                categories: [categoryByName['Electronics']],
+                images: ['https://example.com/images/iphone15.jpg'],
             },
             {
                 title: 'Air Fryer Pro',
                 description: 'Healthy frying with little to no oil',
                 price: 129.99,
                 stock: 30,
-                category: categoryByName['Home & Kitchen'],
-                imageUrl: 'https://example.com/images/airfryer.jpg',
+                seller: userByName['John Smith'],
+                categories: [categoryByName['Home & Kitchen'], categoryByName['Electronics']],
+                images: ['https://example.com/images/airfryer.jpg'],
             },
             {
                 title: '“Clean Code” by Robert C. Martin',
                 description: 'A Handbook of Agile Software Craftsmanship',
                 price: 34.5,
                 stock: 50,
-                category: categoryByName['Books'],
-                imageUrl: 'https://example.com/images/cleancode.jpg',
+                seller: userByName['Alice Johnson'],
+                categories: [categoryByName['Books']],
+                images: ['https://example.com/images/cleancode.jpg'],
             },
             {
                 title: 'Gaming Laptop',
                 description: 'High-performance laptop for gaming and work',
                 price: 1599.99,
                 stock: 10,
-                category: categoryByName['Electronics'],
-                imageUrl: 'https://example.com/images/gaming-laptop.jpg',
+                seller: userByName['Jane Doe'],
+                categories: [categoryByName['Electronics']],
+                images: ['https://example.com/images/gaming-laptop.jpg'],
             },
         ];
         const products = await Product.insertMany(productsData);
