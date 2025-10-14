@@ -19,7 +19,6 @@ async function seed() {
         ]);
         console.log('Cleared Users, Products, and Categories collections');
 
-        // Seed categories
         const categoriesData = [
             { name: 'Electronics', description: 'Phones, laptops, and gadgets' },
             { name: 'Home & Kitchen', description: 'Appliances and home essentials' },
@@ -29,68 +28,74 @@ async function seed() {
         console.log(`Inserted ${categories.length} categories`);
 
         const categoryByName = Object.fromEntries(
-            categories.map(c => [c.name, c._id])
+            categories.map((c) => [c.name, c._id])
         );
 
-        // Seed users
         const salt = bcrypt.genSaltSync(5);
         const hashPassword = (password) => bcrypt.hashSync(password, salt);
-
         const usersData = [
-            { fullname: 'Admin User', email: 'admin@example.com', password: hashPassword('password123'), role: 'admin' },
-            { fullname: 'Jane Doe', email: 'jane@example.com', password: hashPassword('password123'), role: 'user' },
-            { fullname: 'John Smith', email: 'john@example.com', password: hashPassword('password123'), role: 'user' },
-            { fullname: 'Alice Johnson', email: 'alice@example.com', password: hashPassword('password123'), role: 'user' },
+            {
+                fullname: 'Admin User',
+                email: 'admin@example.com',
+                password: hashPassword('password123'),
+                role: 'admin',
+            },
+            {
+                fullname: 'Jane Doe',
+                email: 'jane@example.com',
+                password: hashPassword('password123'),
+                role: 'user',
+            },
+            {
+                fullname: 'John Smith',
+                email: 'john@example.com',
+                password: hashPassword('password123'),
+                role: 'user',
+            },
+            {
+                fullname: 'Alice Johnson',
+                email: 'alice@example.com',
+                password: 'password123', // Plain password for testing
+                role: 'user',
+            }
         ];
         const users = await User.insertMany(usersData);
         console.log(`Inserted ${users.length} users`);
 
-        const sellerId = users[0]._id; // par exemple, Admin sera le vendeur pour les produits
-
-        // Seed products
         const productsData = [
             {
                 title: 'iPhone 15',
                 description: 'Latest Apple smartphone',
                 price: 999,
                 stock: 15,
-                categories: [categoryByName['Electronics']],
-                images: ['https://example.com/images/iphone15.jpg'],
-                seller: sellerId,
-                isActive: true
+                category: categoryByName['Electronics'],
+                imageUrl: 'https://example.com/images/iphone15.jpg',
             },
             {
                 title: 'Air Fryer Pro',
                 description: 'Healthy frying with little to no oil',
                 price: 129.99,
                 stock: 30,
-                categories: [categoryByName['Home & Kitchen']],
-                images: ['https://example.com/images/airfryer.jpg'],
-                seller: sellerId,
-                isActive: true
+                category: categoryByName['Home & Kitchen'],
+                imageUrl: 'https://example.com/images/airfryer.jpg',
             },
             {
                 title: '“Clean Code” by Robert C. Martin',
                 description: 'A Handbook of Agile Software Craftsmanship',
                 price: 34.5,
                 stock: 50,
-                categories: [categoryByName['Books']],
-                images: ['https://example.com/images/cleancode.jpg'],
-                seller: sellerId,
-                isActive: true
+                category: categoryByName['Books'],
+                imageUrl: 'https://example.com/images/cleancode.jpg',
             },
             {
                 title: 'Gaming Laptop',
                 description: 'High-performance laptop for gaming and work',
                 price: 1599.99,
                 stock: 10,
-                categories: [categoryByName['Electronics']],
-                images: ['https://example.com/images/gaming-laptop.jpg'],
-                seller: sellerId,
-                isActive: true
+                category: categoryByName['Electronics'],
+                imageUrl: 'https://example.com/images/gaming-laptop.jpg',
             },
         ];
-
         const products = await Product.insertMany(productsData);
         console.log(`Inserted ${products.length} products`);
 

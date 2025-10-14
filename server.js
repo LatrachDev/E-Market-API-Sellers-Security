@@ -7,15 +7,12 @@ const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
-const ViewsRoutes=require('./routes/viewsRoutes');
 require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(logger);
- app.get('/',(req,res)=>{
-  res.send("hello meriem el mecaniqui ");
- })
-mongoose.connect(process.env.MONGO_URI);
+
+
 
 // swagger
 const options = {
@@ -38,7 +35,6 @@ const options = {
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
-app.use("/product",ViewsRoutes); 
 
 const specs = swaggerJsdoc(options);
 app.use(
@@ -47,14 +43,12 @@ app.use(
   swaggerUi.setup(specs, { explorer: true})
 );
 
-// 
 
-
-
+app.use(require('./middlewares/notFound'));
 
 async function run() {
   try {
-    console.log(" running goes well");
+    console.log("✅running goes well");
   } catch (error) {
     console.log(error);
   }
