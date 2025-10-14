@@ -15,9 +15,9 @@ async function addToCart(req, res, next) {
             return res.status(400).json({ message: "Insufficient stock" });
         }
         let cart = await Cart.findOne({ user: userId });
-        if (!cart) {
-            cart = new Cart({ user: userId, items: [], total: 0 });
-        }
+        // if (!cart) {
+        //     cart = new Cart({ user: userId, items: [], total: 0 });
+        // }
         const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
         if (itemIndex > -1) {
             cart.items[itemIndex].quantity += quantity;

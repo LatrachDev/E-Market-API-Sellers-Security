@@ -8,8 +8,8 @@ const createProductSchema = yup.object({
   description: yup.string().required("Description is required"),
   price: yup.number().positive().required("Price is required"),
   stock: yup.number().integer().required("Stock is required").min(0),
-  category_id: yup.array(yup.string()).required("Category is required"),
-  imageUrl: yup.array(string().url("Invalid image URL").nullable()).notRequired(),
+  categories: yup.array(yup.string()).required("Category is required"),
+  images: yup.array(string().url("Invalid image URL").nullable()).notRequired(),
 });
 
 const updateProductSchema = yup.object({
