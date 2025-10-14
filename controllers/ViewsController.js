@@ -1,11 +1,12 @@
 const View = require('../models/Views');
 class ViewsController {
     createView = async (req, res) => {
-        console.log("test",req.params.id);
+      
         try {
             const view = await View.findOne({
-                userId: req.user.id,
-                productId: req.params.id
+              userId: req.user?.id || "68ee92632cc5727f5c6d0f01",
+
+                productId: req.params.productId
             });
             if (view) {
                 return res.status(409).json({
@@ -17,8 +18,9 @@ class ViewsController {
             const newView = await View.create({
                 rating: req.body.rating,
                 comment: req.body.comment,
-                productId: req.params.id,
-                userId: req.user.id ? req.user.id : "68ee56802f467093eeb35ca2"
+                productId: req.params.productId,
+               userId: req.user?req.user.id:"68ee92632cc5727f5c6d0f01"
+
             });
             res.status(201).json({
                 status: "succes",
@@ -30,32 +32,66 @@ class ViewsController {
             res.status(500).json({ message: err.message });
         }
     }
-    getAllViews = async (req, res) => {
-        try {
-            allViews=await View.find({productId:req.params.id});
-            if(!allViews){
+   getAllViews = async (req, res) => {
+  console.log("productId", req.params.productId);
+  try {
+    const allViews = await View.find({ productId: req.params.productId });
 
-            }
-            res.status(500).json({status:500,
-                message:"all  views for this product ",
-                data:allViews,
-            })
-
-        }
-        catch (err) {
-            res.status(500).json({ message: err.message });
-        }
+    if (allViews.length === 0) {
+      return res.status(404).json({
+        status: 404,
+        message: "No views found for this product"
+      });
     }
-    updateUserView=async(req,res)=>{
 
-        try{
-            const Updated= await View.findOneAndUpdate()
+    res.status(200).json({
+      status: 200,
+      message: "All views for this product",
+      data: allViews,
+      count:allViews.length
+    });
 
-        }
-        catch(err){
-            res.status(500).json({ message: err.message });  
-        }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+   updateUserView = async (req, res) => {
+  const userId = req.user ? req.user.id : "68ee92632cc5727f5c6d0f01";
+ console.log("req.params",req.params);
+  try {
+   
+    const updated = await View.findOneAndUpdate(
+      {
+        _id: req.params.id,      
+        userId: userId  ,
+        productId:req.params.productId         
+      },
+      {
+        comment: req.body.comment,
+        rating: req.body.rating
+      },
+      { new: true } 
+    );
+
+    if (!updated) {
+      return res.status(403).json({
+        status: 403,
+        message: "Vous ne pouvez pas modifier le commentaire d’un autre utilisateur."
+      });
     }
+
+   
+    res.status(200).json({
+      status: 200,
+      message: "Votre avis a été mis à jour avec succès.",
+      data: updated
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 
 
