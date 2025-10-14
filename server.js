@@ -11,7 +11,9 @@ require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(logger);
-
+ app.get('/',(req,res)=>{
+  res.send("hello meriem el mecaniqui ");
+ })
 mongoose.connect(process.env.MONGO_URI);
 
 // swagger
@@ -48,7 +50,7 @@ app.use(require('./middlewares/notFound'));
 
 async function run() {
   try {
-    console.log("✅running goes well");
+    console.log(" running goes well");
   } catch (error) {
     console.log(error);
   }
