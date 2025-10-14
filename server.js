@@ -7,6 +7,7 @@ const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
+const cartRoutes = require("./routes/cartRoutes");
 require("dotenv").config();
 const app = express();
 app.use(express.json());
@@ -35,6 +36,7 @@ const options = {
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
+app.use("/carts", cartRoutes);
 
 const specs = swaggerJsdoc(options);
 app.use(
