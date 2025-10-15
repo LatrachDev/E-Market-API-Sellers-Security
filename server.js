@@ -7,6 +7,8 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
 const cartRoutes = require("./routes/cartRoutes");
+const { connect } = require("mongoose");
+const connectDB = require("./config/db");
 require("dotenv").config();
 const app = express();
 app.use(express.json());
@@ -49,6 +51,7 @@ app.use(require('./middlewares/notFound'));
 
 async function run() {
   try {
+    await connectDB();
     console.log("✅running goes well");
   } catch (error) {
     console.log(error);
