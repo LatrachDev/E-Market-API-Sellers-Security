@@ -6,12 +6,13 @@ const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
+const connectDB = require("./config/db");
 require("dotenv").config();
 const app = express();
 app.use(express.json());
 app.use(logger);
 
-
+connectDB();
 
 // swagger
 const options = {
