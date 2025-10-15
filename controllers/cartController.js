@@ -6,7 +6,8 @@ const Product = require("../models/products");
 async function addToCart(req, res) {
   try {
     // 🔹 Récupérer userId depuis le body au lieu de req.user
-    const { userId, productId, quantity } = req.body;
+    const {  productId, quantity } = req.body;
+    const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
 
     // Vérifier que userId est bien fourni
     if (!userId) {
