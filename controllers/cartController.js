@@ -86,5 +86,37 @@ async function getCart(req, res) {
     }
 }
 
-module.exports = { addToCart, getCart };
+// update cart item quantity
+async function updateCartItem(req, res) {
+    try {
+        const { productId } = req.params;
+        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const { quantity } = req.body;
+        const cart = await Cart.findOne({ user: userId });
+        if (!cart) {
+            return res.status(404).json({ message: "Panier introuvable" });
+        }
+        const itemIndex = cart.items.findIndex(
+            (item) => item.product.toString() === productId
+        );
+        if (itemIndex === -1) {
+            return res.status(404).json({ message: "Produit introuvable dans le panier" });
+        }
+        cart.items[itemIndex].quantity = quantity;
+        cart.total = cart.items.reduce(
+            (acc, item) => acc + item.quantity * item.price,
+            0
+        );
+        await cart.save();
+        res.status(200).json({
+            message: "Quantité mise à jour avec succès",
+            cart,
+        });
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du panier :", error);
+        res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+}
+
+module.exports = { addToCart, getCart, updateCartItem };
 
