@@ -28,8 +28,11 @@
     "supertest": "^7.1.4"
   },
   "scripts": {
-    "devStart": "nodemon server.js",
-    "test": "mocha"
+    "dev": "npx nodemon server.js",
+    "start": "nodemon server.js",
+    "seed" : "node ./seeders/seed.js",
+    "mocha test": "mocha test/*.js",
+    "super test" : "supertest"
   },
   "keywords": [],
   "author": "",
