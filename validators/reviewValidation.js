@@ -1,6 +1,6 @@
 const yup = require('yup');
 
-const createViewSchema = yup.object({
+const createreViewSchema = yup.object({
   comment: yup
     .string()
     .min(3, "Comment must be at least 3 characters long")
@@ -14,4 +14,4 @@ const createViewSchema = yup.object({
     .required("Rating is required"),
 });
 
-module.exports = {createViewSchema};
+module.exports = {createreViewSchema};

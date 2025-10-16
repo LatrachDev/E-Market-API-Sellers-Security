@@ -4,7 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
-const viewRoutes = require("./routes/viewsRoutes");
+const viewRoutes = require("./routes/reviewsRoutes");
 
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");

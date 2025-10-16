@@ -1,8 +1,8 @@
-const View = require('../models/Views');
+const Review = require('../models/review');
 const Order = require('../models/Order');
 const { findOne } = require('../models/products');
 class ViewsController {
-  createView = async (req, res) => {
+  createreView = async (req, res) => {
     try {
 
 
@@ -24,12 +24,12 @@ class ViewsController {
       }
 
 
-      const existingView = await View.findOne({
+      const existingreView = await Review.findOne({
         userId: userId,
         productId: productId
       });
 
-      if (existingView) {
+      if (existingreView) {
         return res.status(409).json({
           message: "Vous avez déjà laissé un avis pour ce produit",
           status: "409"
@@ -37,7 +37,7 @@ class ViewsController {
       }
 
 
-      const newView = await View.create({
+      const newreView = await Review.create({
         rating: req.body.rating,
         comment: req.body.comment,
         productId: productId,
@@ -46,25 +46,25 @@ class ViewsController {
 
       res.status(201).json({
         status: "success",
-        data: newView
+        data: newreView
       });
 
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
   };
-  getAllViews = async (req, res) => {
+  getAllreViews = async (req, res) => {
     console.log("productId", req.params.productId);
     try {
-      const allViews = await View.find({
+      const allreViews = await Review.find({
         productId: req.params.productId, deletedAt: null
 
       });
 
-      if (allViews.length === 0) {
+      if (allreViews.length === 0) {
         return res.status(404).json({
           status: 404,
-          message: "No views found for this product"
+          message: "No reviews found for this product"
         });
       }
 
@@ -72,7 +72,7 @@ class ViewsController {
         status: 200,
         message: "All views for this product",
         data: allViews,
-        count: allViews.length
+        count: allreViews.length
       });
 
     } catch (err) {
@@ -80,12 +80,12 @@ class ViewsController {
     }
   };
 
-  updateUserView = async (req, res) => {
+  updateUsereView = async (req, res) => {
     const userId = req.user ? req.user.id : "68ee92632cc5727f5c6d0f00";
     console.log("req.params", req.params);
     try {
 
-      const updated = await View.findOneAndUpdate(
+      const updated = await Review.findOneAndUpdate(
         {
           _id: req.params.id,
           userId: userId,
@@ -116,12 +116,12 @@ class ViewsController {
       res.status(500).json({ message: err.message });
     }
   };
-  updateViews = async (req, res) => {
-    const viewId = req.params.id;
+  updatereViews = async (req, res) => {
+    const reviewId = req.params.id;
     try {
-      const ViewUpdate = await View.findOneAndUpdate({ _id: viewId }, { rating: req.body.rating, comment: req.body.comment }, { new: true });
+      const reViewUpdate = await Review.findOneAndUpdate({ _id: reviewId }, { rating: req.body.rating, comment: req.body.comment }, { new: true });
 
-      if (ViewUpdate) {
+      if (reViewUpdate) {
         res.status(404).json({
           status: 404,
           message: " view not found"
@@ -129,7 +129,7 @@ class ViewsController {
       }
       res.status(200).json({
         status: 200,
-        data: ViewUpdate
+        data: reViewUpdate
       })
 
 
@@ -142,7 +142,7 @@ class ViewsController {
     }
 
   }
-  deleteUserView = async (req, res) => {
+  deleteUsereView = async (req, res) => {
 
     const where = {
       _id: req.params.id,
@@ -152,29 +152,29 @@ class ViewsController {
     console.log("test where ", where);
 
     try {
-      const view = await View.findOne(where);
+      const review = await Review.findOne(where);
 
-      if (!view) {
+      if (!review) {
         return res.status(403).json({
           status: 403,
           message: "Pas accès pour supprimer la vue d’un autre utilisateur"
         });
       }
 
-      if (view.deletedAt) {
+      if (review.deletedAt) {
         return res.status(400).json({
           status: 400,
           message: "Déjà supprimée"
         });
       }
 
-      view.deletedAt = new Date();
-      await view.save();
+      review.deletedAt = new Date();
+      await review.save();
 
       return res.status(200).json({
         status: 200,
         message: "View supprimée (soft delete) avec succès",
-        data: view
+        data: review
       });
 
     } catch (err) {
@@ -184,18 +184,18 @@ class ViewsController {
       });
     }
   };
-  deleteViews = async (req, res) => {
+  deletereViews = async (req, res) => {
     try {
-      const view = await View.findById({ _id: req.params.id });
-      if (!view) {
+      const review = await Review.findById({ _id: req.params.id });
+      if (!review) {
         res.status(404).json({ status: 404, message: "view not found " });
       }
-      if (view.deletedAt) {
+      if (review.deletedAt) {
         res.status(400).json({ status: 400, message: "Déjà supprimée" });
       }
-      view.deletedAt = new Date();
-      await view.save();
-      res.status(200).json({ status: 200, message: " View supprimée (soft delete) avec succès", data: view })
+      review.deletedAt = new Date();
+      await review.save();
+      res.status(200).json({ status: 200, message: " View supprimée (soft delete) avec succès", data: review })
     }
     catch (err) {
       res.status(500).json({ status: 500, message: err.message });
