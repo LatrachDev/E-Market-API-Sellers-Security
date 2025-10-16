@@ -71,7 +71,7 @@ class ViewsController {
       res.status(200).json({
         status: 200,
         message: "All views for this product",
-        data: allViews,
+        data: allreViews,
         count: allreViews.length
       });
 
@@ -81,7 +81,7 @@ class ViewsController {
   };
 
   updateUsereView = async (req, res) => {
-    const userId = req.user ? req.user.id : "68ee92632cc5727f5c6d0f00";
+    const userId = req.user ? req.user.id : "68ef9c9b9deb6380ccd3d65b";
     console.log("req.params", req.params);
     try {
 
@@ -121,7 +121,7 @@ class ViewsController {
     try {
       const reViewUpdate = await Review.findOneAndUpdate({ _id: reviewId }, { rating: req.body.rating, comment: req.body.comment }, { new: true });
 
-      if (reViewUpdate) {
+      if (!reViewUpdate) {
         res.status(404).json({
           status: 404,
           message: " view not found"
