@@ -118,5 +118,36 @@ async function updateCartItem(req, res) {
     }
 }
 
-module.exports = { addToCart, getCart, updateCartItem };
+// delete cart item
+async function deleteCartItem(req, res) {
+    try {
+        const { productId } = req.params;
+        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const cart = await Cart.findOne({ user: userId });
+        if (!cart) {
+            return res.status(404).json({ message: "Panier introuvable" });
+        }
+        const itemIndex = cart.items.findIndex(
+            (item) => item.product.toString() === productId
+        );
+        if (itemIndex === -1) {
+            return res.status(404).json({ message: "Produit introuvable dans le panier" });
+        }
+        cart.items.splice(itemIndex, 1);
+        cart.total = cart.items.reduce(
+            (acc, item) => acc + item.quantity * item.price,
+            0
+        );
+        await cart.save();
+        res.status(200).json({
+            message: "Produit supprimé du panier avec succès",
+            cart,
+        });
+    } catch (error) {
+        console.error("Erreur lors de la suppression du produit du panier :", error);
+        res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+}
+
+module.exports = { addToCart, getCart, updateCartItem, deleteCartItem };
 
