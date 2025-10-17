@@ -124,8 +124,8 @@ async function getOneProduct(req, res, next) {
 
 async function createProduct(req, res, next) {
   try {
-    const { title, description, price, stock, category_id, imageUrl } =
-      req.body;
+    const { title, description, price, stock, categories, imageUrl } = req.body;
+
     const existingProduct = await Products.findOne({ title });
     if (existingProduct) {
       return res.status(400).json({ message: "Product already exists" });
@@ -141,11 +141,13 @@ async function createProduct(req, res, next) {
       description,
       price,
       stock,
-      category_id,
-      imageUrl,
+      categories,
+      seller,
+      images,
+      isActive: false,
     });
     res.status(201).json({
-      message: "product created successfully",
+      message: "product created successfully (awaiting admin approval)",
       product: product.toObject(),
     });
   } catch (error) {

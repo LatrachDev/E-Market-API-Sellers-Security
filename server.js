@@ -5,8 +5,13 @@ const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const authRoutes = require("./routes/authRoutes");
+const viewRoutes = require("./routes/reviewsRoutes");
+
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
+const cartRoutes = require("./routes/cartRoutes");
+const { connect } = require("mongoose");
+const connectDB = require("./config/db");
 require("dotenv").config();
 const app = express();
 app.use(express.json());
@@ -36,6 +41,8 @@ app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/auth", authRoutes);
+app.use("/product", viewRoutes);
+app.use("/carts", cartRoutes);
 
 const specs = swaggerJsdoc(options);
 app.use(
@@ -49,6 +56,8 @@ app.use(require('./middlewares/notFound'));
 
 async function run() {
   try {
+   
+    await connectDB();
     console.log("✅running goes well");
   } catch (error) {
     console.log(error);

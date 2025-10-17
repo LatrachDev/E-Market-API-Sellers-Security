@@ -27,4 +27,9 @@ const loginSchema = yup.object({
 });
 
 
-module.exports = userSchema;
+module.exports = {
+  userSchema,
+  registerSchema,
+  loginSchema,
+};
+
