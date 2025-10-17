@@ -9,7 +9,7 @@ const controller = new ViewsController();
 
 router.post('/:productId/review',validate(Shema.createreViewSchema), controller.createreView);
 
-router.get('/:productId/review',limiter, controller.getAllreViews);
+router.get('/:productId/review',limiter.apiLimiter,controller.getAllreViews);
 router.put('/:productId/review/:id', controller.updateUsereView);
 router.delete('/:productId/review/:id',controller.deleteUsereView)
 

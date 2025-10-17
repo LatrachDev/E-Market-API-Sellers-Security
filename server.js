@@ -4,6 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const authRoutes = require("./routes/authRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
 
 const logger = require('./middlewares/logger');
@@ -12,7 +13,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const { connect } = require("mongoose");
 const connectDB = require("./config/db");
 const {corsOptions}=require('./middlewares/security');
-
+const cors=require('cors');
 require("dotenv").config();
 helmet=require('helmet');
 const app = express();
@@ -42,6 +43,7 @@ const options = {
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
+app.use("/auth", authRoutes);
 app.use("/product", viewRoutes);
 app.use("/carts", cartRoutes);
 
