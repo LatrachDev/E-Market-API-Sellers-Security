@@ -30,9 +30,10 @@
   "scripts": {
     "dev": "npx nodemon server.js",
     "start": "nodemon server.js",
-    "seed" : "node ./seeders/seed.js",
+    "seed": "node ./seeders/seed.js",
+     "test": "mocha --exit",
     "mocha test": "mocha test/*.js",
-    "super test" : "supertest"
+    "super test": "supertest"
   },
   "keywords": [],
   "author": "",
