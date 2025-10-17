@@ -5,6 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
@@ -41,6 +42,7 @@ app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/product", viewRoutes);
 app.use("/carts", cartRoutes);
+app.use("/orders", orderRoutes);
 
 const specs = swaggerJsdoc(options);
 app.use(
