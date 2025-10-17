@@ -4,6 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const authRoutes = require("./routes/authRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
 
 const logger = require('./middlewares/logger');
@@ -39,6 +40,7 @@ const options = {
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
+app.use("/auth", authRoutes);
 app.use("/product", viewRoutes);
 app.use("/carts", cartRoutes);
 
