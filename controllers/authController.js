@@ -14,7 +14,55 @@ exports.register = async (req, res) => {
         const newUser = new User({ fullname, email, password: hashedPassword });
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully' });
-    }catch (error) {
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+}
+
+exports.login = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({
+                status: 'error',
+                message: 'Invalid email or password'
+            });
+        }
+
+        // Compare password
+        const isPasswordValid = await comparePassword(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                status: "error",
+                message: 'Invalid email or password'
+            });
+        }
+
+        // Generate JWT token
+        const token = generateToken({
+            id: user._id,
+            email: user.email,
+            role: user.role
+        });
+
+        // Send response with token
+        res.status(200).json({
+            status: 'success',
+            message: 'Login successful',
+            data: {
+                jwt: token,
+                user: {
+                    id: user._id,
+                    fullname: user.fullname,
+                    email: user.email,
+                    role: user.role
+                }
+
+            }
+        });
+    } catch (error) {
         res.status(500).json({ message: 'Server error' });
     }
 }
