@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const { verifyToken } = require('../utils/jwtUtils');
 
-const authMiddleware = async (req, res, next) => {
+exports.authMiddleware = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
