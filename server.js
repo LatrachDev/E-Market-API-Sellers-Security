@@ -6,14 +6,16 @@ const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const authRoutes = require("./routes/authRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
+const cartRoutes = require("./routes/cartRoutes");
 
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
-const cartRoutes = require("./routes/cartRoutes");
-const { connect } = require("mongoose");
+
 const connectDB = require("./config/db");
 require("dotenv").config();
+
 const app = express();
+
 app.use(express.json());
 app.use(logger);
 
