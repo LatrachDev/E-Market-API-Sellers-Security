@@ -4,6 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const authRoutes = require("./routes/authRoutes");
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
 require("dotenv").config();
@@ -34,6 +35,7 @@ const options = {
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
+app.use("/auth", authRoutes);
 
 const specs = swaggerJsdoc(options);
 app.use(
