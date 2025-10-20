@@ -56,6 +56,7 @@ async function createOrder(req, res, next) {
   }
 }
 
+// get orders for a user
 async function getOrders(req, res, next) {
   try {
     const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
@@ -66,4 +67,44 @@ async function getOrders(req, res, next) {
   }
 }
 
-module.exports = { createOrder, getOrders };
+// simuler paiement
+async function simulatePayment(orderId) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+        resolve(true);
+    }, 2000);
+  });
+}
+
+
+async function simulatePaymentController(req, res) {
+  const { orderId } = req.body;
+
+  try {
+    const order = await Orders.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ status: "error", message: "Commande introuvable" });
+    }
+
+    // Simuler le traitement du paiement
+    const paymentSuccess = await simulatePayment(orderId);
+
+    if (paymentSuccess) {
+      order.status = "paid"; // 🔹 on met à jour le statut
+      await order.save();
+      return res.status(200).json({
+        status: "success",
+        message: "Paiement simulé avec succès",
+        order,
+      });
+    } else {
+      return res.status(400).json({ status: "error", message: "Échec du paiement simulé" });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la simulation du paiement :", error);
+    res.status(500).json({ status: "error", message: "Erreur interne du serveur" });
+  }
+}
+
+
+module.exports = { createOrder, getOrders, simulatePayment ,simulatePaymentController };
