@@ -48,13 +48,22 @@ async function createOrder(req, res, next) {
     cart.total = 0;
     await cart.save();
 
-    res.status(201).json({ message: "Commande créée avec succès", order });
+    res.status(201).json({status: "success", message: "Commande créée avec succès", order });
 
   } catch (error) {
     console.error("Erreur lors de la création de la commande :", error);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res.status(500).json({ status: "error", message: "Erreur interne du serveur" });
   }
 }
 
+async function getOrders(req, res, next) {
+  try {
+    const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+    const orders = await Orders.find({ user: userId }).populate("items.product");
+    res.status(200).json({ status: "success", orders });
+  } catch (error) {
+    next(error);
+  }
+}
 
-module.exports = { createOrder };
+module.exports = { createOrder, getOrders };
