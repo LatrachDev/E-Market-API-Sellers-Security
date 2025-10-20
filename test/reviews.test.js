@@ -17,11 +17,6 @@ describe("Test add review", () => {
     expect(res.body).to.have.property('status', "success");
     expect(res.body.data).to.have.property('rating', 2);
     expect(res.body.data).to.have.property('comment', "Super produit !");
-  });
-  it("should return 409  dejaa  addded by user",async()=>{
-const res= await request(app).
-
-
-  })
-});
+  });})
+  
  
