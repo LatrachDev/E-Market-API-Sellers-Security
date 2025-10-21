@@ -22,17 +22,20 @@
   "main": "index.js",
   "devDependencies": {
     "chai": "^6.2.0",
+    "chai-http": "^5.1.2",
     "jest": "^30.2.0",
     "mocha": "^11.7.4",
     "nodemon": "^3.1.10",
+    "sinon": "^21.0.0",
     "supertest": "^7.1.4"
   },
   "scripts": {
     "dev": "npx nodemon server.js",
     "start": "nodemon server.js",
-    "seed" : "node ./seeders/seed.js",
+    "seed": "node ./seeders/seed.js",
     "mocha test": "mocha test/*.js",
-    "super test" : "supertest"
+    "super test": "supertest",
+    "test": "mocha --timeout 10000"
   },
   "keywords": [],
   "author": "",
