@@ -1,6 +1,6 @@
 exports.role = (...allowedRoles) => {
     return (req, res, next) => {
-        if(!req.user) {
+        if (!req.user) {
             return res.status(401).json(
                 {
                     status: 'error',

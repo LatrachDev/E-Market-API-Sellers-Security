@@ -1,6 +1,7 @@
 const express = require("express");
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
@@ -10,6 +11,7 @@ const cartRoutes = require("./routes/cartRoutes");
 
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
+const auth = require("./middlewares/auth");
 
 const connectDB = require("./config/db");
 require("dotenv").config();
@@ -39,12 +41,12 @@ const options = {
   },
   apis: ["./routes/*.js", "./controllers/*.js"],
 };
-app.use("/users", userRoutes);
-app.use("/products", productRoutes);
-app.use("/categories", categoryRoutes);
+app.use("/users", auth, userRoutes);
+app.use("/products", auth, productRoutes);
+app.use("/categories", auth, categoryRoutes);
 app.use("/auth", authRoutes);
-app.use("/product", viewRoutes);
-app.use("/carts", cartRoutes);
+app.use("/product", auth, viewRoutes);
+app.use("/carts", auth, cartRoutes);
 
 const specs = swaggerJsdoc(options);
 app.use(
