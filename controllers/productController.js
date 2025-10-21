@@ -124,9 +124,11 @@ async function getOneProduct(req, res, next) {
 
 async function createProduct(req, res, next) {
   try {
-    const { title, description, price, stock, categories, seller, images } = req.body;
-    console.log("request body fiha hadchi .. :", req.body);
+    const { title, description, price, stock, categories, images } = req.body;
     
+    console.log("request body fiha hadchi .. :", req.body);
+    const seller = req.user.id;
+    console.log("hahoa seller dyalna :", seller);
 
     const existingProduct = await Products.findOne({ title });
 
