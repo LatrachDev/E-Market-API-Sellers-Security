@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { verifyToken } = require('../utils/jwtUtils');
+const { verifyToken } = require('../services/jwt');
 
 exports.authMiddleware = async (req, res, next) => {
     try {
@@ -38,6 +38,6 @@ exports.authMiddleware = async (req, res, next) => {
     } catch (error) {
 
         next(error);
-        
+
     }
 }

@@ -1,13 +1,17 @@
 const Review = require('../models/review');
 const Order = require('../models/Order');
 const { findOne } = require('../models/products');
+const mongoose=require('mongoose');
 class ViewsController {
   createreView = async (req, res) => {
     try {
 
 
-      const userId = req.user ? req.user.id : "68ef9c9b9deb6380ccd3d65b";
+      const userId = req.user.id;
+      console.log(userId);
+
       const productId = req.params.productId;
+
 
 
       const order = await Order.findOne({
@@ -46,6 +50,7 @@ class ViewsController {
 
       res.status(201).json({
         status: "success",
+        statusCode: 201,
         data: newreView
       });
 
@@ -97,13 +102,12 @@ class ViewsController {
         },
         { new: true }
       );
-
-      if (!updated) {
-        return res.status(403).json({
-          status: 403,
-          message: "Vous ne pouvez pas modifier le commentaire d’un autre utilisateur."
-        });
-      }
+if (!updated) {
+  return res.status(403).json({  
+    status: 403,
+    message: "Vous ne pouvez pas modifier le commentaire d'un autre utilisateur."
+  });
+}
 
 
       res.status(200).json({
@@ -154,12 +158,12 @@ class ViewsController {
     try {
       const review = await Review.findOne(where);
 
-      if (!review) {
-        return res.status(403).json({
-          status: 403,
-          message: "Pas accès pour supprimer la vue d’un autre utilisateur"
-        });
-      }
+     if (!review) {
+  return res.status(403).json({ 
+    status: 403,
+    message: "Pas accès pour supprimer la vue d'un autre utilisateur"
+  });
+}
 
       if (review.deletedAt) {
         return res.status(400).json({
