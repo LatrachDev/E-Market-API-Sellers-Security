@@ -1,22 +1,28 @@
+
 const cors = require('cors');
+
 const corsOptions = {
   origin: function (origin, callback) {
     console.log('Origin:', origin);
-    // autoriser Postman ou curl (pas d'origin)
+    
+    // ✅ Autoriser les requêtes sans origin (Postman, curl, mobile apps)
     if (!origin) return callback(null, true);
 
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
 
     if (allowedOrigins.includes(origin)) {
-        // // Autoriser
       callback(null, true);
     } else {
-    //   callback :une fonction fournie par la librairie cors.
-    // bloquer 
-      callback(new Error('Origin non autorisée'));
+      
+      callback(new Error('Non autorisé par CORS - Origin: ' + origin));
     }
   },
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  //  add de headers autorisés
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  //  Méthodes HTTP acceptés
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
 };
-module.exports={corsOptions};
+
+module.exports = { corsOptions };
