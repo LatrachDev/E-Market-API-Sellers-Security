@@ -4,6 +4,7 @@ const swaggerUi = require('swagger-ui-express');
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const authRoutes = require("./routes/authRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 
@@ -12,12 +13,15 @@ const errorHandler = require("./middlewares/errorHandler");
 const cartRoutes = require("./routes/cartRoutes");
 const { connect } = require("mongoose");
 const connectDB = require("./config/db");
+const {corsOptions}=require('./middlewares/security');
+const cors=require('cors');
 require("dotenv").config();
+helmet=require('helmet');
 const app = express();
 app.use(express.json());
 app.use(logger);
-
-
+ app.use(helmet());
+ app.use(cors(corsOptions));
 
 // swagger
 const options = {
@@ -40,6 +44,7 @@ const options = {
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
+app.use("/auth", authRoutes);
 app.use("/product", viewRoutes);
 app.use("/carts", cartRoutes);
 app.use("/orders", orderRoutes);
@@ -64,5 +69,9 @@ async function run() {
   }
 }
 app.use(errorHandler);
-
-app.listen(process.env.PORT, run());
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  run();
+  console.log(`Server running on port ${PORT}`);
+});
+module.exports=app;
