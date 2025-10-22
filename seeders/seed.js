@@ -85,10 +85,12 @@ async function seed() {
     } catch (err) {
         console.error('Seeding failed:', err);
         process.exitCode = 1;
-    } finally {
-        await mongoose.connection.close();
-        console.log('MongoDB connection closed');
-    }
+    } 
+    // finally {
+    //     await mongoose.connection.close();
+    //     console.log('MongoDB connection closed');
+    // }
 }
 
 seed();
+module.exports = seed;
