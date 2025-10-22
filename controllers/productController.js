@@ -1,5 +1,6 @@
 const Products = require("../models/products");
 const Category = require("../models/categories");
+const NotificationEmitter = require('../events/notificationEmitter');
 
 /**
  * @swagger
@@ -124,18 +125,27 @@ async function getOneProduct(req, res, next) {
 
 async function createProduct(req, res, next) {
   try {
-    const { title, description, price, stock, categories, imageUrl } = req.body;
+    const { title, description, price, stock, categories, seller, images } = req.body;
+    console.log("request body fiha hadchi .. :", req.body);
+
 
     const existingProduct = await Products.findOne({ title });
+
     if (existingProduct) {
       return res.status(400).json({ message: "Product already exists" });
     }
 
-    const categoryExists = await Category.findById(category_id);
-    if (!categoryExists) {
-        return res.status(404).json({ message: 'Category not found' });
+
+    // const categoryExists = await Category.findById(categories);
+    // if (!categoryExists) {
+    //     return res.status(404).json({ message: 'Category not found' });
+    // }
+
+    const categoryExists = await Category.find({ _id: { $in: categories } });
+    if (categoryExists.length !== categories.length) {
+      return res.status(404).json({ message: 'One or more categories not found' });
     }
-  
+
     const product = await Products.create({
       title,
       description,
@@ -146,6 +156,13 @@ async function createProduct(req, res, next) {
       images,
       isActive: false,
     });
+    console.log('Émission de l\'événement NEW_PRODUCT pour:', product.seller);
+NotificationEmitter.emit('NEW_PRODUCT', {
+  recipient: product.seller,
+  productId: product._id,
+  productName: product.title,
+});
+console.log('Événement émis avec succès');
     res.status(201).json({
       message: "product created successfully (awaiting admin approval)",
       product: product.toObject(),
@@ -206,7 +223,7 @@ async function editProduct(req, res, next) {
         description: req.body.description,
         price: req.body.price,
         stock: req.body.stock,
-        category_id: req.body.category_id,
+        categories: req.body.categories,
         imageUrl: req.body.imageUrl,
       },
       { new: true }

@@ -1,89 +1,51 @@
-const mongoose = require("mongoose");
-
+// models/Notification.js
+const mongoose = require('mongoose');
 
 const notificationSchema = new mongoose.Schema({
-  
-  // 1️⃣ DESTINATAIRE (pas "userId" !)
   recipient: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    index: true  // 🔥 INDEX pour recherches rapides
+    index: true // Pour optimiser les requêtes
   },
-  
-  // 2️⃣ TYPE SPÉCIFIQUE (pas générique)
   type: {
     type: String,
-    enum: [
-      'NEW_PRODUCT',        
-      'ORDER_PLACED',       
-      'ORDER_CANCELLED',    
-      'ORDER_SHIPPED',     
-      'ORDER_DELIVERED',    
-      'PAYMENT_RECEIVED', 
-      'STOCK_LOW',         
-      'SYSTEM' ,
-      'ORDER_UPDATED'             
-    ],
-    required: true
+    required: true,
+    enum: ['NEW_PRODUCT', 'ORDER_STATUS', 'ORDER_CONFIRMED', 'ORDER_SHIPPED', 'ORDER_DELIVERED', 'GENERAL']
   },
-  
-  
   title: {
     type: String,
     required: true,
-    maxlength: 100
+    maxlength: 200
   },
-  
-
   message: {
     type: String,
     required: true,
-    maxlength: 500
+    maxlength: 1000
   },
-  
-  
   relatedEntity: {
     entityType: {
       type: String,
-      enum: ['Product', 'Order','User', 'System'],
-      required: true
+      enum: ['Product', 'Order', 'User', 'Review']
     },
     entityId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true
+      type: mongoose.Schema.Types.ObjectId
     }
   },
-  
- 
   isRead: {
     type: Boolean,
-    default: false,
-    index: true  
+    default: false
   },
-  
-
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    index: true  
+  readAt: {
+    type: Date
   }
-  
-}, {
- 
-  timestamps: true  
+}, { 
+  timestamps: true 
 });
 
-notificationSchema.index({ recipient: 1, isRead: 1, createdAt: -1 });
+notificationSchema.index({ recipient: 1, createdAt: -1 });
+notificationSchema.index({ recipient: 1, isRead: 1 });
+
+
 
 module.exports = mongoose.model('Notification', notificationSchema);
-// const mongoose = require('mongoose');
-
-// const notificationSchema = new mongoose.Schema({
-//   recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-//   type: { type: String, required: true },
-//   message: { type: String, required: true },
-//   isRead: { type: Boolean, default: false },
-// }, { timestamps: true });
-
-// module.exports = mongoose.model('Notification', notificationSchema);

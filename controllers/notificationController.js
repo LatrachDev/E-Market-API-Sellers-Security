@@ -1,30 +1,80 @@
+// controllers/notificationController.js
 const Notification = require('../models/Notification');
 
 class NotificationController {
-  // récupérer toutes les notifications d’un utilisateur
-  async getNotifications(req, res) {
+  
+  async getNotifications(req, res, next) {
     try {
-      const notifications = await Notification.find({ recipient: req.user._id }).sort({ createdAt: -1 });
-      res.status(200).json(notifications);
-    } catch (err) {
-      res.status(500).json({ message: 'Erreur serveur', error: err.message });
+      const userId = req.user?._id || req.query.userId; 
+      const { page = 1, limit = 20, unreadOnly = false } = req.query;
+
+      const query = { recipient: userId };
+      if (unreadOnly === 'true') {
+        query.isRead = false;
+      }
+
+
+      const notifications = await Notification.find(query)
+        .sort({ createdAt: -1 })
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .lean();
+
+      const total = await Notification.countDocuments(query);
+      const unreadCount = await Notification.countDocuments({
+        recipient: userId,
+        isRead: false
+      });
+
+      res.json({
+        notifications,
+        pagination: {
+          total,
+          page: parseInt(page),
+          pages: Math.ceil(total / limit),
+          unreadCount
+        }
+      });
+
+    } catch (error) {
+      console.error(' Erreur getNotifications:', error.message);
+      next(error);
     }
   }
 
-  // marquer une notification comme lue
-  async markAsRead(req, res) {
+ 
+   
+  async markAsRead(req, res, next) {
     try {
-      const notification = await Notification.findByIdAndUpdate(
-        req.params.id,
+      const { id } = req.params;
+      const userId = req.user?._id || req.query.userId;
+
+      const notification = await Notification.findOneAndUpdate(
+        { _id: id, recipient: userId },
         { isRead: true },
         { new: true }
       );
-      if (!notification) return res.status(404).json({ message: 'Notification introuvable' });
-      res.status(200).json(notification);
-    } catch (err) {
-      res.status(500).json({ message: 'Erreur serveur', error: err.message });
+
+      if (!notification) {
+        return res.status(404).json({ message: 'Notification introuvable' });
+      }
+
+      res.json({
+        message: 'Notification marquée comme lue',
+        notification
+      });
+
+    } catch (error) {
+      console.error(' Erreur markAsRead:', error.message);
+      next(error);
     }
   }
+
+  
+  
+
+ 
+ 
 }
 
 module.exports = NotificationController;
