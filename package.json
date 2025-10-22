@@ -29,14 +29,16 @@
     "sinon": "^21.0.0",
     "supertest": "^7.1.4"
   },
- "scripts": {
-  "dev": "npx nodemon server.js",
-  "start": "nodemon server.js",
-  
-  "seed": "node ./seeders/seed.js",
-  "test": "mocha test/*.js --timeout 5000"
-}
-,
+ 
+
+  "scripts": {
+    "dev": "npx nodemon server.js",
+    "start": "nodemon server.js",
+    "seed": "node ./seeders/seed.js",
+    "mocha test": "mocha test/*.js",
+    "super test": "supertest",
+    "test": "mocha --timeout 10000"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
