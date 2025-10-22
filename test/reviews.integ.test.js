@@ -7,6 +7,7 @@ const Order = require('../models/Order');
 const Product = require('../models/products');
 const User = require('../models/user');
 const { generateToken } = require('../services/jwt');
+require("dotenv").config();
 
 describe('Review Controller - Integration Tests', () => {
   let userToken, adminToken;
@@ -15,7 +16,7 @@ describe('Review Controller - Integration Tests', () => {
 
   // Connexion à la base de données de test avant tous les tests
   before(async () => {
-    const testDbUri = process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/marketSeller_test';
+    const testDbUri = process.env.PORT ;
     
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(testDbUri);
