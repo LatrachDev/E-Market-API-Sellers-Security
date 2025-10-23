@@ -7,21 +7,28 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const authRoutes = require("./routes/authRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
 const orderRoutes = require("./routes/orderRoutes");
-
-const logger = require('./middlewares/logger');
-const errorHandler = require("./middlewares/errorHandler");
 const cartRoutes = require("./routes/cartRoutes");
+
+
+const requestLogger = require('./middlewares/requestLogger');
+
+const errorHandler = require("./middlewares/errorHandler");
 const { connect } = require("mongoose");
 const connectDB = require("./config/db");
 const {corsOptions}=require('./middlewares/security');
+
+
 const cors=require('cors');
 require("dotenv").config();
 helmet=require('helmet');
 const app = express();
+app.use(requestLogger);
+
 app.use(express.json());
-app.use(logger);
- app.use(helmet());
- app.use(cors(corsOptions));
+// app.use(logger);
+app.use(helmet());
+app.use(cors(corsOptions));
+
 
 // swagger
 const options = {
