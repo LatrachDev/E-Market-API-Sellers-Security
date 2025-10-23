@@ -6,7 +6,7 @@ const notificationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-    index: true // Pour optimiser les requêtes
+    index: true
   },
  
   title: {
@@ -34,7 +34,11 @@ const notificationSchema = new mongoose.Schema({
   },
   readAt: {
     type: Date
-  }
+  },
+   deletedAt: {
+        type: Date,
+        default: null
+    }
 }, { 
   timestamps: true 
 });

@@ -8,10 +8,11 @@ const auth = require('../middlewares/auth');
 
 router.get('/',auth.authMiddleware, controller.getNotifications);
 
+router.patch('/:id/read', auth.authMiddleware,controller.markAsRead);
+router.patch('/read/all', auth.authMiddleware, controller.markAllAsRead);
 
+router.delete('/:id', auth.authMiddleware, controller.deleteNotification);
 
-
-router.patch('/:id/read', controller.markAsRead);
 
 
 module.exports = router;

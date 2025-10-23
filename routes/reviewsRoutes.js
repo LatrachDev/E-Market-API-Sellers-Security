@@ -7,16 +7,18 @@ const ViewsController = require('../controllers/reviewController');
  const auth=require('../middlewares/auth');
  
 const controller = new ViewsController();
+const isAdmin=require('../middlewares/isAdmin');
 
 router.post('/:productId/review',auth.authMiddleware,validate(Shema.createreViewSchema), controller.createreView);
 
-router.get('/:productId/review',limiter.apiLimiter,controller.getAllreViews);
+router.get('/:productId/review',controller.getAllreViews);
 router.put('/:productId/review/:id',auth.authMiddleware, controller.updateUsereView);
 router.delete('/:productId/review/:id',auth.authMiddleware,controller.deleteUsereView)
 
 //  router admin :
-router.delete('/review/:id',auth.authMiddleware, controller.deletereViews);
-router.put('/review/:id',auth.authMiddleware, controller.updatereViews);
+router.delete('/review/:id', auth.authMiddleware, isAdmin, controller.deletereViews);
+router.put('/review/:id', auth.authMiddleware, isAdmin, controller.updatereViews);
+
 
 
 

@@ -10,7 +10,7 @@ describe("Cart Controller", () => {
 
   beforeEach(() => {
     req = {
-      user: { id: "user123" },
+      user: { _id: "user123" },
       body: {},
       params: {}
     };

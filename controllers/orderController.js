@@ -8,7 +8,7 @@ const NotificationEmitter = require('../events/notificationEmitter');
 // create a new order  
 async function createOrder(req, res, next) {
     try {
-        const userId = req.user?._id ;
+        const userId = req.user?._id;
 
         if (!userId) {
             return res.status(400).json({ message: "L'ID utilisateur est requis" });
@@ -45,12 +45,14 @@ async function createOrder(req, res, next) {
         });
 
         await order.save();
-        
-        NotificationEmitter.emit('ORDER_PASS', {
-            recipient: userId,
-            orderId: order._id,
 
-        });
+        if (process.env.NODE_ENV !== "test") {
+            NotificationEmitter.emit('ORDER_PASS', {
+                recipient: userId,
+                orderId: order._id,
+            });
+        }
+
 
 
 
@@ -165,6 +167,48 @@ async function updateStockAfterOrder(req, res) {
         res.status(500).json({ message: "Erreur interne du serveur." });
     }
 }
+async function updateOrderStatus(req, res) {
+    try {
+        const { orderId } = req.params;
+        const { newStatus } = req.body;
+        const validStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+
+        if (!orderId || !newStatus) {
+            return res.status(400).json({ message: "ID de commande et nouveau statut requis." });
+        }
+
+        if (!validStatuses.includes(newStatus)) {
+            return res.status(400).json({ message: "Statut invalide." });
+        }
+
+        const order = await Orders.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: "Commande introuvable." });
+        }
+
+        order.status = newStatus;
+        await order.save();
+
+        if (process.env.NODE_ENV !== "test") {
+           NotificationEmitter.emit('ORDER_UPDATED', {
+    recipient: order.user,
+    orderId: order._id,
+    newStatus,
+});
+
+        }
+
+        res.status(200).json({
+            status: "success",
+            message: `Statut de la commande mis à jour en "${newStatus}".`,
+            order,
+        });
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du statut :", error);
+        res.status(500).json({ message: "Erreur interne du serveur." });
+    }
+}
 
 
-module.exports = { createOrder, getOrders, simulatePayment, simulatePaymentController, updateStockAfterOrder };
+module.exports = { createOrder, getOrders, simulatePayment, simulatePaymentController, updateStockAfterOrder,updateOrderStatus };

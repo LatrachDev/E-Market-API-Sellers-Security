@@ -47,7 +47,7 @@ class NotificationController {
   async markAsRead(req, res, next) {
     try {
       const { id } = req.params;
-      const userId = req.user?._id || req.query.userId;
+      const userId = req.user?._id ;
 
       const notification = await Notification.findOneAndUpdate(
         { _id: id, recipient: userId },
@@ -69,6 +69,75 @@ class NotificationController {
       next(error);
     }
   }
+ async markAllAsRead(req, res) {
+  try {
+    const userId = req.user._id;
+
+    const result = await Notification.updateMany(
+      { recipient: userId, isRead: false, isDeleted: null },
+      { $set: { isRead: true } }
+    );
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Toutes les notifications ont été marquées comme lues",
+      data: {
+        modifiedCount: result.modifiedCount 
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: "Erreur serveur",
+      data: {
+        error: error.message
+      }
+    });
+  }
+}
+async deleteNotification(req, res) {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+   
+    const notification = await Notification.findOneAndUpdate(
+      { _id: id, recipient: userId, deletedAt: null },
+      { $set: { deletedAt: new Date() } },
+      { new: true }
+    );
+
+    if (!notification) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: "Notification introuvable ou déjà supprimée",
+        data: {}
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Notification supprimée (soft delete)",
+      data: {
+        id: notification._id,
+        deletedAt: notification.deletedAt
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: "Erreur serveur",
+      data: { error: error.message }
+    });
+  }
+}
+
+
 
   
   

@@ -37,7 +37,7 @@
     "seed": "node ./seeders/seed.js",
     "mocha test": "mocha test/*.js",
     "super test": "supertest",
-    "test": "mocha --timeout 10000"
+     "test": "NODE_ENV=test mocha --timeout 10000"
   },
   "keywords": [],
   "author": "",

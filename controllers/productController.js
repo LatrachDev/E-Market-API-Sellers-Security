@@ -155,16 +155,16 @@ async function createProduct(req, res, next) {
       images,
       isActive: false,
     });
-//     console.log('Émission de l\'événement NEW_PRODUCT pour:', product.seller);
-// NotificationEmitter.emit('NEW_PRODUCT', {
-//   recipient: product.seller,
-//   productId: product._id,
-//   productName: product.title,
-// });
-// console.log('Événement émis avec succès');
+   if (process.env.NODE_ENV !== "test") {
+NotificationEmitter.emit('NEW_PRODUCT', {
+  recipient: product.seller,
+  productId: product._id,
+  productName: product.title,
+});}
+
     res.status(201).json({
       message: "product created successfully (awaiting admin approval)",
-      // product: product.toObject(),
+    
       data: product,
     });
   } catch (error) {
