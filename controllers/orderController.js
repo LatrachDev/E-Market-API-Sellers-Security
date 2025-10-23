@@ -1,13 +1,14 @@
 const Orders = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/products");
+const NotificationEmitter = require('../events/notificationEmitter');
 
 // ==============================================gestion des commandes==================================================
 
 // create a new order  
 async function createOrder(req, res, next) {
     try {
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?._id ;
 
         if (!userId) {
             return res.status(400).json({ message: "L'ID utilisateur est requis" });
@@ -44,6 +45,13 @@ async function createOrder(req, res, next) {
         });
 
         await order.save();
+        
+        NotificationEmitter.emit('ORDER_PASS', {
+            recipient: userId,
+            orderId: order._id,
+
+        });
+
 
 
         cart.items = [];
@@ -128,7 +136,7 @@ async function updateStockAfterOrder(req, res) {
         // 3️⃣ Vérifier que la commande est payée
         if (order.status !== "paid" && order.paymentStatus !== "paid") {
             return res.status(400).json({ message: "Le paiement n'est pas encore confirmé." });
-        } 
+        }
 
         // 4️⃣ Parcourir les items et mettre à jour le stock
         for (const item of order.items) {

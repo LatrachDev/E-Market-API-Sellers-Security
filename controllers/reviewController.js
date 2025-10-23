@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 class ViewsController {
   createreView = async (req, res) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user._id;
       console.log(userId);
 
       const productId = req.params.productId;
@@ -82,7 +82,7 @@ class ViewsController {
   };
 
   updateUsereView = async (req, res) => {
-    const userId = req.user ? req.user.id : "68ef9c9b9deb6380ccd3d65b";
+    const userId = req.user._id ;
     console.log("req.params", req.params);
     try {
       const updated = await Review.findOneAndUpdate(
@@ -149,7 +149,7 @@ class ViewsController {
     const where = {
       _id: req.params.id,
       productId: req.params.productId,
-      userId: req.user.id
+      userId: req.user._id
     };
     console.log("test where ", where);
 

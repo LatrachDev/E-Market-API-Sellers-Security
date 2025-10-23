@@ -10,9 +10,9 @@ const orderRoutes = require("./routes/orderRoutes");
 const notificationRoutes = require('./routes/notificationRoutes');
 const couponRoutes = require("./routes/couponRoutes");
 
-// ✅ CHARGEMENT DES EVENT LISTENERS
+
 require('./events/orderListeners');
-require('./events/productListeners'); // ← AJOUTEZ CETTE LIGNE
+require('./events/productListeners'); 
 
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");

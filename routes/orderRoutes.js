@@ -1,8 +1,10 @@
 const express = require("express");
 const { createOrder ,getOrders ,simulatePaymentController  ,updateStockAfterOrder} = require("../controllers/orderController");
 const router = express.Router();
+const auth=require('../middlewares/auth');
 
-router.post("/", createOrder);
+
+router.post("/",auth.authMiddleware, createOrder);
 router.get("/", getOrders);
 router.post("/simulate-payment", simulatePaymentController);
 router.put("/", updateStockAfterOrder);

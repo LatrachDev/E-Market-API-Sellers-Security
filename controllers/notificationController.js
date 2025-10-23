@@ -5,7 +5,7 @@ class NotificationController {
   
   async getNotifications(req, res, next) {
     try {
-      const userId = req.user?._id || req.query.userId; 
+      const userId = req.user?._id;
       const { page = 1, limit = 20, unreadOnly = false } = req.query;
 
       const query = { recipient: userId };
