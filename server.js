@@ -24,6 +24,11 @@ const cors = require('cors');
 require("dotenv").config();
 const helmet = require('helmet');
 
+
+
+
+
+
 const app = express();
 app.use(express.json());
 app.use(logger);
@@ -58,7 +63,10 @@ app.use("/product", viewRoutes);
 app.use("/carts", cartRoutes);
 app.use("/orders", orderRoutes);
 app.use('/notifications', notificationRoutes);
+
 app.use("/coupons", couponRoutes);
+
+app.use("/uploads", express.static("uploads"));
 
 const specs = swaggerJsdoc(options);
 app.use(

@@ -1,6 +1,7 @@
 const Products = require("../models/products");
 const Category = require("../models/categories");
-const NotificationEmitter = require('../events/notificationEmitter');
+// const NotificationEmitter = require('../events/notificationEmitter');
+// const { file } = require("bun");
 
 /**
  * @swagger
@@ -125,9 +126,11 @@ async function getOneProduct(req, res, next) {
 
 async function createProduct(req, res, next) {
   try {
-    const { title, description, price, stock, categories, seller, images } = req.body;
+    const { title, description, price, stock, categories } = req.body;
+    
     console.log("request body fiha hadchi .. :", req.body);
-
+    const seller = req.user.id;
+    console.log("hahoa seller dyalna :", seller);
 
     const existingProduct = await Products.findOne({ title });
 
@@ -135,17 +138,13 @@ async function createProduct(req, res, next) {
       return res.status(400).json({ message: "Product already exists" });
     }
 
-
-    // const categoryExists = await Category.findById(categories);
-    // if (!categoryExists) {
-    //     return res.status(404).json({ message: 'Category not found' });
-    // }
+    const images = req.files?.map((file) => `/uploads/products/${file.filename}`) || [];
 
     const categoryExists = await Category.find({ _id: { $in: categories } });
     if (categoryExists.length !== categories.length) {
       return res.status(404).json({ message: 'One or more categories not found' });
     }
-
+  
     const product = await Products.create({
       title,
       description,
@@ -156,16 +155,17 @@ async function createProduct(req, res, next) {
       images,
       isActive: false,
     });
-    console.log('Émission de l\'événement NEW_PRODUCT pour:', product.seller);
-NotificationEmitter.emit('NEW_PRODUCT', {
-  recipient: product.seller,
-  productId: product._id,
-  productName: product.title,
-});
-console.log('Événement émis avec succès');
+//     console.log('Émission de l\'événement NEW_PRODUCT pour:', product.seller);
+// NotificationEmitter.emit('NEW_PRODUCT', {
+//   recipient: product.seller,
+//   productId: product._id,
+//   productName: product.title,
+// });
+// console.log('Événement émis avec succès');
     res.status(201).json({
       message: "product created successfully (awaiting admin approval)",
-      product: product.toObject(),
+      // product: product.toObject(),
+      data: product,
     });
   } catch (error) {
     next(error);
@@ -216,21 +216,24 @@ console.log('Événement émis avec succès');
 async function editProduct(req, res, next) {
   try {
     const id = req.params.id;
-    const newProduct = await Products.findByIdAndUpdate(
+    const newImages = req.files?.map((file) => `/uploads/products/${file.filename}`) || [];
+
+    const updatedProduct = await Products.findByIdAndUpdate(
       id,
       {
-        title: req.body.title,
-        description: req.body.description,
-        price: req.body.price,
-        stock: req.body.stock,
-        categories: req.body.categories,
-        imageUrl: req.body.imageUrl,
+        ...req.body,
+        ...(newImages.length > 0 && { images: newImages }), 
       },
       { new: true }
     );
+
+    if (!updatedProduct) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    
     res.status(200).json({
       message: "product Updated successfully ",
-      product: newProduct,
+      product: updatedProduct,
     });
   } catch (error) {
     next(error);
