@@ -44,6 +44,8 @@ app.use("/product", viewRoutes);
 app.use("/carts", cartRoutes);
 app.use("/coupons", couponRoutes);
 
+app.use("/uploads", express.static("uploads"));
+
 const specs = swaggerJsdoc(options);
 app.use(
   "/api-docs",

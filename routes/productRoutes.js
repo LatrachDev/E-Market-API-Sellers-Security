@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("../middlewares/uploadImages");
 const {
   getProducts,
   getOneProduct,
@@ -19,8 +20,10 @@ const router = express.Router();
 
 router.get("/", getProducts);
 router.get("/:id", getOneProduct);
-router.post("/", authenticateUser, validate(createProductSchema), createProduct);
-router.put("/:id", authenticateUser, checkProductOwnership, validate(updateProductSchema), editProduct);
+
+router.post("/", authenticateUser, upload.array("images", 5), validate(createProductSchema), createProduct);
+router.put("/:id", authenticateUser, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
+
 router.delete("/:id", authenticateUser, checkProductOwnership, deleteProduct);
 
 module.exports = router;
