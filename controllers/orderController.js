@@ -7,7 +7,7 @@ const Product = require("../models/products");
 // create a new order  
 async function createOrder(req, res, next) {
     try {
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?.id ;
 
         if (!userId) {
             return res.status(400).json({ message: "L'ID utilisateur est requis" });
@@ -61,7 +61,7 @@ async function createOrder(req, res, next) {
 // get orders for a user
 async function getOrders(req, res, next) {
     try {
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?.id ;
         const orders = await Orders.find({ user: userId }).populate("items.product");
         res.status(200).json({ status: "success", orders });
     } catch (error) {

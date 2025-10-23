@@ -7,7 +7,7 @@ async function addToCart(req, res) {
     try {
         // 🔹 Récupérer userId depuis le body au lieu de req.user
         const { productId, quantity } = req.body;
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?.id ;
 
         // Vérifier que userId est bien fourni
         if (!userId) {
@@ -73,7 +73,7 @@ async function addToCart(req, res) {
 async function getCart(req, res) {
     try {
         // const userId = req.params.userId;
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?.id;
 
         const cart = await Cart.findOne({ user: userId }).populate("items.product");
         if (!cart) {
@@ -90,7 +90,7 @@ async function getCart(req, res) {
 async function updateCartItem(req, res) {
     try {
         const { productId } = req.params;
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?.id  ;
         const { quantity } = req.body;
         const cart = await Cart.findOne({ user: userId });
         if (!cart) {
@@ -122,7 +122,7 @@ async function updateCartItem(req, res) {
 async function deleteCartItem(req, res) {
     try {
         const { productId } = req.params;
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?.id ;
         const cart = await Cart.findOne({ user: userId });
         if (!cart) {
             return res.status(404).json({ message: "Panier introuvable" });
