@@ -2,10 +2,11 @@ const express = require("express");
 const { createOrder ,getOrders ,simulatePaymentController  ,updateStockAfterOrder,updateOrderStatus} = require("../controllers/orderController");
 const router = express.Router();
 const auth=require('../middlewares/auth');
+const isAdmin=require('../middlewares/isAdmin');
 
 
 router.post("/",auth.authMiddleware, createOrder);
-router.get("/", getOrders);
+router.get("/", auth.authMiddleware, getOrders);
 
 /**
  * @swagger
@@ -65,6 +66,6 @@ router.post("/simulate-payment", simulatePaymentController);
  *         description: Erreur lors de la mise à jour du stock
  */
 router.put("/", updateStockAfterOrder);
-router.put("/:orderId/status",auth.authMiddleware, updateOrderStatus);
+router.put("/:orderId/status",auth.authMiddleware,isAdmin, updateOrderStatus);
 
 module.exports = router;

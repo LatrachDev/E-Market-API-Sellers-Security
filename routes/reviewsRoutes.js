@@ -213,7 +213,7 @@ router.put('/:productId/review/:id',auth.authMiddleware, controller.updateUsereV
 router.delete('/:productId/review/:id',auth.authMiddleware,controller.deleteUsereView)
 
 //  router admin :
-router.delete('/review/:id', auth.authMiddleware, isAdmin, controller.deletereViews);
+router.delete('/review/:id', auth.authMiddleware,isAdmin, controller.deletereViews);
 router.put('/review/:id', auth.authMiddleware, isAdmin, controller.updatereViews);
 
 module.exports = router;
