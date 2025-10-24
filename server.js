@@ -25,10 +25,6 @@ require("dotenv").config();
 const helmet = require('helmet');
 
 
-
-
-
-
 const app = express();
 app.use(express.json());
 app.use(logger);
@@ -52,7 +48,10 @@ const options = {
       },
     ],
   },
-  apis: ["./routes/*.js", "./controllers/*.js"],
+  apis: [
+    "./routes/*.js",
+    "./controllers/*.js",
+    "./models/*.js" ]
 };
 
 app.use("/users", userRoutes);

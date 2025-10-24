@@ -194,7 +194,7 @@ class ViewsController {
       if (!review) {
         return res.status(404).json({
           status: 404,
-          message: "view not found "  // ✅ Espace ajouté pour matcher le test
+          message: "view not found " 
         });
       }
 
@@ -210,7 +210,7 @@ class ViewsController {
 
       return res.status(200).json({
         status: 200,
-        message: " View supprimée (soft delete) avec succès",  // ✅ Espace au début pour matcher le test
+        message: " View supprimée (soft delete) avec succès", 
         data: review
       });
 
