@@ -16,7 +16,7 @@ describe('Review Controller - Integration Tests', () => {
 
   // Connexion à la base de données de test avant tous les tests
   before(async () => {
-    const testDbUri = process.env.PORT ;
+    const testDbUri = process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/marketSeller_test' || process.env.MONGO_URI ;
     
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(testDbUri);
@@ -84,13 +84,22 @@ describe('Review Controller - Integration Tests', () => {
   });
 
   // Nettoyer après tous les tests
-  after(async () => {
+ after(async function() {
+  this.timeout(15000); // Important !
+  
+  try {
     await Review.deleteMany({});
     await Order.deleteMany({});
     await Product.deleteMany({});
     await User.deleteMany({});
-    await mongoose.connection.close();
-  });
+    
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.close();
+    }
+  } catch (error) {
+    console.error('Erreur lors du nettoyage:', error);
+  }
+});
 
   describe('POST /:productId/review - Create Review', () => {
     afterEach(async () => {

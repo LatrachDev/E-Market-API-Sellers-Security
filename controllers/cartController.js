@@ -73,8 +73,8 @@ async function addToCart(req, res) {
 // get cart
 async function getCart(req, res) {
     try {
-        // const userId = req.params.userId;
-        const userId = req.user?.id;
+     
+        const userId = req.user?._id ;
 
         const cart = await Cart.findOne({ user: userId }).populate("items.product");
         if (!cart) {
@@ -91,7 +91,8 @@ async function getCart(req, res) {
 async function updateCartItem(req, res) {
     try {
         const { productId } = req.params;
-        const userId = req.user?.id  ;
+        const userId = req.user?._id;
+        
         const { quantity } = req.body;
         const cart = await Cart.findOne({ user: userId });
         if (!cart) {
@@ -123,7 +124,7 @@ async function updateCartItem(req, res) {
 async function deleteCartItem(req, res) {
     try {
         const { productId } = req.params;
-        const userId = req.user?.id ;
+        const userId = req.user?._id ;
         const cart = await Cart.findOne({ user: userId });
         if (!cart) {
             return res.status(404).json({ message: "Panier introuvable" });

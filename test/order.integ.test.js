@@ -20,7 +20,7 @@ describe("Order Controller - Integration Tests", () => {
     req = {
       body: {},
       params: {},
-      user: { id: "68ee92632cc5727f5c6d0f01" },
+      user: { _id: "68ee92632cc5727f5c6d0f01" },
     };
     res = {
       status: sinon.stub().returnsThis(),
