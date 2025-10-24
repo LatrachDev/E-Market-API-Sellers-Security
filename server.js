@@ -13,6 +13,7 @@ const couponRoutes = require("./routes/couponRoutes");
 
 require('./events/orderListeners');
 require('./events/productListeners'); 
+const requestLogger=require('./middlewares/requestLogger');
 
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
@@ -26,6 +27,8 @@ const helmet = require('helmet');
 
 
 const app = express();
+app.use(requestLogger);
+
 app.use(express.json());
 app.use(logger);
 app.use(helmet());
@@ -79,7 +82,7 @@ app.use(require('./middlewares/notFound'));
 async function run() {
   try {
     await connectDB();
-    console.log("✅ Running goes well");
+    console.log(" Running goes well");
   } catch (error) {
     console.log(error);
   }
