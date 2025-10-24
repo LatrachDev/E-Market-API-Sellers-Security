@@ -66,3 +66,9 @@
 [2025-10-24T10:20:32.466Z] INFO: GET /api-docs/swagger-ui-standalone-preset.js 200
 [2025-10-24T10:20:32.476Z] INFO: GET /api-docs/swagger-ui-bundle.js 200
 [2025-10-24T10:20:32.805Z] INFO: GET /api-docs/favicon-32x32.png 200
+[2025-10-24T10:22:56.954Z] INFO: GET /api-docs/ 304
+[2025-10-24T10:22:56.982Z] INFO: GET /api-docs/swagger-ui.css 304
+[2025-10-24T10:22:56.987Z] INFO: GET /api-docs/swagger-ui-init.js 200
+[2025-10-24T10:22:56.988Z] INFO: GET /api-docs/swagger-ui-bundle.js 304
+[2025-10-24T10:22:56.991Z] INFO: GET /api-docs/swagger-ui-standalone-preset.js 304
+[2025-10-24T10:22:57.198Z] INFO: GET /api-docs/favicon-32x32.png 304
