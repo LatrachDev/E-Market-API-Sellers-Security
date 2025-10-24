@@ -8,14 +8,15 @@ const authRoutes = require("./routes/authRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
-const cartRoutes = require("./routes/cartRoutes");
+const couponRoutes = require("./routes/couponRoutes");
+// const cartRoutes = require("./routes/cartRoutes");
 
 
 const requestLogger = require('./middlewares/requestLogger');
 
 const errorHandler = require("./middlewares/errorHandler");
 const { connect } = require("mongoose");
-const connectDB = require("./config/db");
+// const connectDB = require("./config/db");
 const {corsOptions}=require('./middlewares/security');
 
 

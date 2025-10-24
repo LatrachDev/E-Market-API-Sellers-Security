@@ -1,13 +1,15 @@
 const Orders = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/products");
+const Coupon = require("../models/Coupon");
 
 // ==============================================gestion des commandes==================================================
 
 // create a new order  
 async function createOrder(req, res, next) {
     try {
-        const userId = req.user?.id ;
+        const userId = req.user?.id;
+        const { couponCode } = req.body;
 
         if (!userId) {
             return res.status(400).json({ message: "L'ID utilisateur est requis" });
@@ -23,7 +25,7 @@ async function createOrder(req, res, next) {
             return res.status(400).json({ message: "Le panier est vide" });
         }
 
-        // filtrer les produits invalides
+        // 🧩 Filtrer les produits valides
         const orderItems = cart.items
             .filter(item => item.product)
             .map(item => ({
@@ -37,31 +39,97 @@ async function createOrder(req, res, next) {
             return res.status(400).json({ message: "Certains produits du panier n'existent plus." });
         }
 
+        let total = cart.total;
+        let appliedCoupon = null;
+        let discount = 0;
+
+        // 🎟️ Si un code promo est fourni
+        if (couponCode) {
+            const coupon = await Coupon.findOne({
+                code: couponCode.toUpperCase(),
+                isDeleted: false
+            });
+
+            if (!coupon) {
+                return res.status(404).json({ message: "Coupon introuvable" });
+            }
+
+            // Vérifier la date d'expiration
+            if (new Date(coupon.expirationDate) < new Date()) {
+                return res.status(400).json({ message: "Ce coupon est expiré" });
+            }
+
+            // Vérifier le nombre d’utilisations restantes
+            if (coupon.usesLeft <= 0) {
+                return res.status(400).json({ message: "Ce coupon a atteint sa limite d'utilisation" });
+            }
+
+            // Vérifier si le coupon est lié à un produit spécifique
+            if (coupon.product_id) {
+                const productExistsInCart = orderItems.some(item =>
+                    item.product.toString() === coupon.product_id.toString()
+                );
+
+                if (!productExistsInCart) {
+                    return res.status(400).json({
+                        message: "Ce coupon ne s'applique pas aux produits de votre panier"
+                    });
+                }
+            }
+
+            // Calcul de la réduction
+            if (coupon.type === "percentage") {
+                discount = (total * coupon.discount) / 100;
+            } else if (coupon.type === "fixed") {
+                discount = coupon.discount;
+            }
+
+            total = Math.max(total - discount, 0);
+            appliedCoupon = coupon;
+        }
+
+        // ✅ Créer la commande
         const order = new Orders({
             user: userId,
             items: orderItems,
-            total: cart.total,
+            total,
+            discountApplied: discount,
+            coupon: appliedCoupon ? appliedCoupon._id : null
         });
 
         await order.save();
 
+        // 🧾 Mettre à jour le coupon (s’il a été utilisé)
+        if (appliedCoupon) {
+            appliedCoupon.usesLeft -= 1;
+            await appliedCoupon.save();
+        }
 
+        // 🛒 Vider le panier
         cart.items = [];
         cart.total = 0;
         await cart.save();
 
-        res.status(201).json({ status: "success", message: "Commande créée avec succès", order });
+        res.status(201).json({
+            status: "success",
+            message: "Commande créée avec succès",
+            order
+        });
 
     } catch (error) {
         console.error("Erreur lors de la création de la commande :", error);
-        res.status(500).json({ status: "error", message: "Erreur interne du serveur" });
+        res.status(500).json({
+            status: "error",
+            message: error.message || "Erreur interne du serveur"
+        });
     }
 }
+
 
 // get orders for a user
 async function getOrders(req, res, next) {
     try {
-        const userId = req.user?.id ;
+        const userId = req.user?.id;
         const orders = await Orders.find({ user: userId }).populate("items.product");
         res.status(200).json({ status: "success", orders });
     } catch (error) {
@@ -128,7 +196,7 @@ async function updateStockAfterOrder(req, res) {
         // 3️⃣ Vérifier que la commande est payée
         if (order.status !== "paid" && order.paymentStatus !== "paid") {
             return res.status(400).json({ message: "Le paiement n'est pas encore confirmé." });
-        } 
+        }
 
         // 4️⃣ Parcourir les items et mettre à jour le stock
         for (const item of order.items) {
@@ -159,4 +227,4 @@ async function updateStockAfterOrder(req, res) {
 }
 
 
-module.exports = {  createOrder, getOrders, simulatePayment, simulatePaymentController, updateStockAfterOrder };
+module.exports = { createOrder, getOrders, simulatePayment, simulatePaymentController, updateStockAfterOrder };

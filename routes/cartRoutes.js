@@ -1,6 +1,8 @@
 const express = require('express');
 const { addToCart, getCart, updateCartItem, deleteCartItem } = require('../controllers/cartController');
 const router = express.Router();
+const authenticateUser  = require("../middlewares/auth");
+
 
 /**
  * @swagger
@@ -39,7 +41,7 @@ const router = express.Router();
  *       400:
  *         description: Erreur lors de l'ajout au panier
  */
-router.post('/', addToCart);
+router.post('/',authenticateUser.authMiddleware, addToCart);
 
 /**
  * @swagger

@@ -13,7 +13,7 @@ const {
   updateProductSchema,
 } = require("../validators/productValidation");
 
-const { authenticateUser } = require("../middlewares/auth");
+const authenticateUser  = require("../middlewares/auth");
 const { checkProductOwnership } = require("../middlewares/checkProductOwnership");
 
 const router = express.Router();
@@ -21,9 +21,9 @@ const router = express.Router();
 router.get("/", getProducts);
 router.get("/:id", getOneProduct);
 
-router.post("/", authenticateUser, upload.array("images", 5), validate(createProductSchema), createProduct);
-router.put("/:id", authenticateUser, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
+router.post("/", authenticateUser.authMiddleware, upload.array("images", 5), validate(createProductSchema), createProduct);
+router.put("/:id", authenticateUser.authMiddleware, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
 
-router.delete("/:id", authenticateUser, checkProductOwnership, deleteProduct);
+router.delete("/:id", authenticateUser.authMiddleware, checkProductOwnership, deleteProduct);
 
 module.exports = router;

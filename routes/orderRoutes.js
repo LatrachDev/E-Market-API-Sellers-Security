@@ -1,6 +1,8 @@
 const express = require("express");
 const { createOrder, getOrders, simulatePaymentController, updateStockAfterOrder } = require("../controllers/orderController");
 const router = express.Router();
+const authenticateUser  = require("../middlewares/auth");
+
 
 /**
  * @swagger
@@ -29,7 +31,7 @@ const router = express.Router();
  *                 description: ID du panier à convertir en commande
  *               paymentMethod:
  *                 type: string
- *                 description: Méthode de paiement (ex: carte, espèce, etc.)
+ *                 description: "Méthode de paiement (ex: carte, espèce, etc.)"
  *             example:
  *               cartId: "66f3e41c51a2a8e0d4f3a9b7"
  *               paymentMethod: "carte"
@@ -49,7 +51,7 @@ const router = express.Router();
  *       400:
  *         description: Erreur lors de la création de la commande
  */
-router.post("/", createOrder);
+router.post("/", authenticateUser.authMiddleware, createOrder);
 
 /**
  * @swagger
@@ -125,7 +127,7 @@ router.get("/", getOrders);
  *       404:
  *         description: Commande introuvable
  */
-router.post("/simulate-payment", simulatePaymentController);
+router.post("/simulate-payment",authenticateUser.authMiddleware, simulatePaymentController);
 
 /**
  * @swagger
@@ -147,6 +149,6 @@ router.post("/simulate-payment", simulatePaymentController);
  *       400:
  *         description: Erreur lors de la mise à jour du stock
  */
-router.put("/", updateStockAfterOrder);
+router.put("/", authenticateUser.authMiddleware, updateStockAfterOrder);
 
 module.exports = router;
