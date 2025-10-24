@@ -24,7 +24,6 @@ const { connect } = require("mongoose");
 // const {corsOptions}=require('./middlewares/security');
 
 
-helmet=require('helmet');
 
 const connectDB = require("./config/db");
 const { corsOptions } = require('./middlewares/security');
