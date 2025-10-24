@@ -6,6 +6,7 @@ const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const authRoutes = require("./routes/authRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
+const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 
@@ -19,8 +20,11 @@ const {corsOptions}=require('./middlewares/security');
 
 
 const cors=require('cors');
-require("dotenv").config();
 helmet=require('helmet');
+
+require("dotenv").config();
+const connectDB = require("./config/db");
+
 const app = express();
 app.use(requestLogger);
 
@@ -55,6 +59,9 @@ app.use("/auth", authRoutes);
 app.use("/product", viewRoutes);
 app.use("/carts", cartRoutes);
 app.use("/orders", orderRoutes);
+app.use("/coupons", couponRoutes);
+
+app.use("/uploads", express.static("uploads"));
 
 const specs = swaggerJsdoc(options);
 app.use(
