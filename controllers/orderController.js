@@ -159,4 +159,4 @@ async function updateStockAfterOrder(req, res) {
 }
 
 
-module.exports = { createOrder, getOrders, simulatePayment, simulatePaymentController, updateStockAfterOrder };
+module.exports = {  createOrder, getOrders, simulatePayment, simulatePaymentController, updateStockAfterOrder };

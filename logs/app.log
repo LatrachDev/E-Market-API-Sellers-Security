@@ -59,3 +59,10 @@
 [2025-10-23T15:59:37.815Z] WARN: DELETE /product/review/68fa50e95669a9fe6efe68e0 404
 [2025-10-23T15:59:38.096Z] INFO: DELETE /product/review/68fa50e95669a9fe6efe68e4 200
 [2025-10-23T15:59:38.203Z] WARN: DELETE /product/review/68fa50e95669a9fe6efe68e4 400
+[2025-10-24T10:20:32.347Z] INFO: GET /api-docs 301
+[2025-10-24T10:20:32.365Z] INFO: GET /api-docs/ 200
+[2025-10-24T10:20:32.456Z] INFO: GET /api-docs/swagger-ui-init.js 200
+[2025-10-24T10:20:32.462Z] INFO: GET /api-docs/swagger-ui.css 200
+[2025-10-24T10:20:32.466Z] INFO: GET /api-docs/swagger-ui-standalone-preset.js 200
+[2025-10-24T10:20:32.476Z] INFO: GET /api-docs/swagger-ui-bundle.js 200
+[2025-10-24T10:20:32.805Z] INFO: GET /api-docs/favicon-32x32.png 200
