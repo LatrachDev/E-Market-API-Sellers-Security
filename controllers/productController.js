@@ -1,6 +1,6 @@
 const Products = require("../models/products");
 const Category = require("../models/categories");
-// const NotificationEmitter = require('../events/notificationEmitter');
+
 // const { file } = require("bun");
 
 /**
@@ -129,7 +129,7 @@ async function createProduct(req, res, next) {
     const { title, description, price, stock, categories } = req.body;
     
     console.log("request body fiha hadchi .. :", req.body);
-    const seller = req.user.id;
+    const seller = req.user._id;
     console.log("hahoa seller dyalna :", seller);
 
     const existingProduct = await Products.findOne({ title });
