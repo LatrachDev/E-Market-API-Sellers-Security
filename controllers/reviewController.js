@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 class ViewsController {
   createreView = async (req, res) => {
     try {
-      const userId = req.user.id;
+      const userId = req.user._id;
       console.log(userId);
 
       const productId = req.params.productId;
@@ -82,7 +82,7 @@ class ViewsController {
   };
 
   updateUsereView = async (req, res) => {
-    const userId = req.user ? req.user.id : "68ef9c9b9deb6380ccd3d65b";
+    const userId = req.user._id ;
     console.log("req.params", req.params);
     try {
       const updated = await Review.findOneAndUpdate(
@@ -149,7 +149,7 @@ class ViewsController {
     const where = {
       _id: req.params.id,
       productId: req.params.productId,
-      userId: req.user.id
+      userId: req.user._id
     };
     console.log("test where ", where);
 
@@ -194,7 +194,7 @@ class ViewsController {
       if (!review) {
         return res.status(404).json({
           status: 404,
-          message: "view not found "  // ✅ Espace ajouté pour matcher le test
+          message: "view not found " 
         });
       }
 
@@ -210,7 +210,7 @@ class ViewsController {
 
       return res.status(200).json({
         status: 200,
-        message: " View supprimée (soft delete) avec succès",  // ✅ Espace au début pour matcher le test
+        message: " View supprimée (soft delete) avec succès", 
         data: review
       });
 

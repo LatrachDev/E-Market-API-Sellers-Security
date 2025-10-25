@@ -1,15 +1,10 @@
 const express = require("express");
-const { createOrder, getOrders, simulatePaymentController, updateStockAfterOrder } = require("../controllers/orderController");
+const { createOrder ,getOrders ,simulatePaymentController  ,updateStockAfterOrder,updateOrderStatus} = require("../controllers/orderController");
 const router = express.Router();
 const authenticateUser  = require("../middlewares/auth");
+const isAdmin = require("../middlewares/isAdmin");
 
 
-/**
- * @swagger
- * tags:
- *   name: Commandes
- *   description: Gestion des commandes et du paiement
- */
 
 /**
  * @swagger
@@ -150,5 +145,6 @@ router.post("/simulate-payment",authenticateUser.authMiddleware, simulatePayment
  *         description: Erreur lors de la mise à jour du stock
  */
 router.put("/", authenticateUser.authMiddleware, updateStockAfterOrder);
+router.put("/:orderId/status",authenticateUser.authMiddleware,isAdmin, updateOrderStatus);
 
 module.exports = router;
