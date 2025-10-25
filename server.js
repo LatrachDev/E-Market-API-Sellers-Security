@@ -7,9 +7,8 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const authRoutes = require("./routes/authRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
 const orderRoutes = require("./routes/orderRoutes");
-const couponRoutes = require("./routes/couponRoutes");
-// const cartRoutes = require("./routes/cartRoutes");
 const notificationRoutes = require('./routes/notificationRoutes');
+const couponRoutes = require("./routes/couponRoutes");
 
 
 require('./events/orderListeners');
@@ -20,12 +19,8 @@ const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
 const cartRoutes = require("./routes/cartRoutes");
 const { connect } = require("mongoose");
-// const connectDB = require("./config/db");
-// const {corsOptions}=require('./middlewares/security');
-
-
-
 const connectDB = require("./config/db");
+const {authLimiter}=require('./middlewares/rate-limiter');
 const { corsOptions } = require('./middlewares/security');
 const cors = require('cors');
 require("dotenv").config();
@@ -66,7 +61,7 @@ const options = {
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
-app.use("/auth", authRoutes);
+app.use("/auth",authLimiter, authRoutes);
 app.use("/product", viewRoutes);
 app.use("/carts", cartRoutes);
 app.use("/orders", orderRoutes);

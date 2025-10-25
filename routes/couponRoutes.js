@@ -6,14 +6,14 @@ const {
     updateCoupon,
     deleteCoupon
 } = require("../controllers/CouponController");
-
+const {apiLimiter,strictLimiter}=require('../middlewares/rate-limiter');
 const router = express.Router();
 
 
-router.post("/", createCoupon);
-router.get("/", getAllCoupons);
-router.get("/:id", getCouponById);
-router.put("/:id", updateCoupon);
-router.delete("/:id", deleteCoupon);
+router.post("/",strictLimiter, createCoupon);
+router.get("/", apiLimiter,getAllCoupons);
+router.get("/:id", apiLimiter,getCouponById);
+router.put("/:id",strictLimiter ,updateCoupon);
+router.delete("/:id", strictLimiter,deleteCoupon);
 
 module.exports = router;

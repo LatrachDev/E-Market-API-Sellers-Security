@@ -1,9 +1,5 @@
 const { rateLimit } = require('express-rate-limit');
- const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-  credentials: true,
-  optionsSuccessStatus: 200
-};
+
 const createLimiter = (windowMs, max, message) => {
   return rateLimit({
     windowMs,
@@ -17,7 +13,7 @@ const createLimiter = (windowMs, max, message) => {
   });
 };
 
-// ✅ Création des limiters
+//  create des limiters
 const authLimiter = createLimiter(
   15 * 60 * 1000, // 15 minutes
   5, 

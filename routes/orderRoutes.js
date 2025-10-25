@@ -2,7 +2,8 @@ const express = require("express");
 const { createOrder ,getOrders ,simulatePaymentController  ,updateStockAfterOrder,updateOrderStatus} = require("../controllers/orderController");
 const router = express.Router();
 const authenticateUser  = require("../middlewares/auth");
-const { isAdmin } = require("../middlewares/auth");
+const isAdmin = require("../middlewares/isAdmin");
+const {apiLimiter,strictLimiter}=require('../middlewares/rate-limiter');
 
 
 
@@ -46,7 +47,7 @@ const { isAdmin } = require("../middlewares/auth");
  *       400:
  *         description: Erreur lors de la création de la commande
  */
-router.post("/", authenticateUser.authMiddleware, createOrder);
+router.post("/", strictLimiter,authenticateUser.authMiddleware, createOrder);
 
 /**
  * @swagger
@@ -85,7 +86,7 @@ router.post("/", authenticateUser.authMiddleware, createOrder);
  *       404:
  *         description: Aucune commande trouvée
  */
-router.get("/", getOrders);
+router.get("/",apiLimiter,authenticateUser.authMiddleware, getOrders);
 
 /**
  * @swagger
@@ -122,7 +123,7 @@ router.get("/", getOrders);
  *       404:
  *         description: Commande introuvable
  */
-router.post("/simulate-payment",authenticateUser.authMiddleware, simulatePaymentController);
+router.post("/simulate-payment",strictLimiter,authenticateUser.authMiddleware, simulatePaymentController);
 
 /**
  * @swagger
@@ -144,7 +145,7 @@ router.post("/simulate-payment",authenticateUser.authMiddleware, simulatePayment
  *       400:
  *         description: Erreur lors de la mise à jour du stock
  */
-router.put("/", authenticateUser.authMiddleware, updateStockAfterOrder);
-// router.put("/:orderId/status",authenticateUser.authMiddleware,isAdmin, updateOrderStatus);
+router.put("/", strictLimiter,authenticateUser.authMiddleware, updateStockAfterOrder);
+router.put("/:orderId/status",strictLimiter,authenticateUser.authMiddleware,isAdmin, updateOrderStatus);
 
 module.exports = router;

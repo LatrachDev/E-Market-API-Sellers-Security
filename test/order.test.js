@@ -11,7 +11,7 @@ describe("Order Controller", () => {
 
   beforeEach(() => {
     req = {
-      user: { _id: "user123" },
+      user: { id: "user123" },
       body: {},
       params: {}
     };
