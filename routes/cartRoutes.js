@@ -1,10 +1,63 @@
 const express = require('express');
 const { addToCart, getCart, updateCartItem, deleteCartItem } = require('../controllers/cartController');
 const router = express.Router();
- const auth=require('../middlewares/auth');
+const authenticateUser  = require("../middlewares/auth");
 
-router.post('/',auth.authMiddleware,addToCart);
-router.get('/',getCart);
+
+/**
+ * @swagger
+ * tags:
+ *   name: Panier
+ *   description: Gestion du panier d'achat
+ */
+
+/**
+ * @swagger
+ * /api/cart:
+ *   post:
+ *     summary: Ajouter un produit au panier
+ *     tags: [Panier]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               productId:
+ *                 type: string
+ *                 description: ID du produit à ajouter
+ *               quantity:
+ *                 type: integer
+ *                 description: Quantité du produit
+ *             example:
+ *               productId: "66f3e41c51a2a8e0d4f3a9b7"
+ *               quantity: 2
+ *     responses:
+ *       200:
+ *         description: Produit ajouté au panier avec succès
+ *       400:
+ *         description: Erreur lors de l'ajout au panier
+ */
+router.post('/',authenticateUser.authMiddleware, addToCart);
+
+/**
+ * @swagger
+ * /api/cart:
+ *   get:
+ *     summary: Récupérer le panier de l'utilisateur connecté
+ *     tags: [Panier]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Panier récupéré avec succès
+ *       404:
+ *         description: Panier introuvable
+ */
+router.get('/', getCart);
 
 /**
  * @swagger

@@ -1,12 +1,91 @@
 const express = require("express");
 const { createOrder ,getOrders ,simulatePaymentController  ,updateStockAfterOrder,updateOrderStatus} = require("../controllers/orderController");
 const router = express.Router();
-const auth=require('../middlewares/auth');
-const isAdmin=require('../middlewares/isAdmin');
+const authenticateUser  = require("../middlewares/auth");
+const { isAdmin } = require("../middlewares/auth");
 
 
-router.post("/",auth.authMiddleware, createOrder);
-router.get("/", auth.authMiddleware, getOrders);
+
+/**
+ * @swagger
+ * /api/orders:
+ *   post:
+ *     summary: Créer une nouvelle commande
+ *     tags: [Commandes]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               cartId:
+ *                 type: string
+ *                 description: ID du panier à convertir en commande
+ *               paymentMethod:
+ *                 type: string
+ *                 description: "Méthode de paiement (ex: carte, espèce, etc.)"
+ *             example:
+ *               cartId: "66f3e41c51a2a8e0d4f3a9b7"
+ *               paymentMethod: "carte"
+ *     responses:
+ *       201:
+ *         description: Commande créée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 message: "Commande créée avec succès"
+ *                 order:
+ *                   id: "672a15c123456789abcd9999"
+ *                   totalAmount: 2499
+ *                   status: "en attente"
+ *       400:
+ *         description: Erreur lors de la création de la commande
+ */
+router.post("/", authenticateUser.authMiddleware, createOrder);
+
+/**
+ * @swagger
+ * /api/orders:
+ *   get:
+ *     summary: Récupérer toutes les commandes de l'utilisateur connecté
+ *     tags: [Commandes]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Liste des commandes récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: ID de la commande
+ *                   totalAmount:
+ *                     type: number
+ *                     description: Montant total
+ *                   status:
+ *                     type: string
+ *                     description: Statut de la commande
+ *                 example:
+ *                   - id: "672a15c123456789abcd9999"
+ *                     totalAmount: 2499
+ *                     status: "payée"
+ *                   - id: "672a15c987654321abcd8888"
+ *                     totalAmount: 1399
+ *                     status: "en attente"
+ *       404:
+ *         description: Aucune commande trouvée
+ */
+router.get("/", getOrders);
 
 /**
  * @swagger
@@ -43,7 +122,7 @@ router.get("/", auth.authMiddleware, getOrders);
  *       404:
  *         description: Commande introuvable
  */
-router.post("/simulate-payment", simulatePaymentController);
+router.post("/simulate-payment",authenticateUser.authMiddleware, simulatePaymentController);
 
 /**
  * @swagger
@@ -65,7 +144,7 @@ router.post("/simulate-payment", simulatePaymentController);
  *       400:
  *         description: Erreur lors de la mise à jour du stock
  */
-router.put("/", updateStockAfterOrder);
-router.put("/:orderId/status",auth.authMiddleware,isAdmin, updateOrderStatus);
+router.put("/", authenticateUser.authMiddleware, updateStockAfterOrder);
+// router.put("/:orderId/status",authenticateUser.authMiddleware,isAdmin, updateOrderStatus);
 
 module.exports = router;

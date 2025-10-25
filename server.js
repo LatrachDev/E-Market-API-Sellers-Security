@@ -7,8 +7,9 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const authRoutes = require("./routes/authRoutes");
 const viewRoutes = require("./routes/reviewsRoutes");
 const orderRoutes = require("./routes/orderRoutes");
-const notificationRoutes = require('./routes/notificationRoutes');
 const couponRoutes = require("./routes/couponRoutes");
+// const cartRoutes = require("./routes/cartRoutes");
+const notificationRoutes = require('./routes/notificationRoutes');
 
 
 require('./events/orderListeners');
@@ -19,6 +20,11 @@ const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
 const cartRoutes = require("./routes/cartRoutes");
 const { connect } = require("mongoose");
+// const connectDB = require("./config/db");
+// const {corsOptions}=require('./middlewares/security');
+
+
+
 const connectDB = require("./config/db");
 const { corsOptions } = require('./middlewares/security');
 const cors = require('cors');
