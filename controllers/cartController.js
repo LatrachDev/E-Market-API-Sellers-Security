@@ -8,6 +8,7 @@ async function addToCart(req, res) {
         // 🔹 Récupérer userId depuis le body au lieu de req.user
         const { productId, quantity } = req.body;
         const userId = req.user?.id ;
+        console.log(req.user);
         console.log("userId:", userId);
 
         // Vérifier que userId est bien fourni
