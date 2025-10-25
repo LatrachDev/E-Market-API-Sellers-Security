@@ -2,6 +2,7 @@ const express = require('express');
 const { addToCart, getCart, updateCartItem, deleteCartItem } = require('../controllers/cartController');
 const router = express.Router();
 const authenticateUser  = require("../middlewares/auth");
+const {apiLimiter,strictLimiter}=require('../middlewares/rate-limiter');
 
 
 /**
@@ -41,7 +42,7 @@ const authenticateUser  = require("../middlewares/auth");
  *       400:
  *         description: Erreur lors de l'ajout au panier
  */
-router.post('/',authenticateUser.authMiddleware, addToCart);
+router.post('/',apiLimiter,authenticateUser.authMiddleware, addToCart);
 
 /**
  * @swagger
@@ -57,7 +58,7 @@ router.post('/',authenticateUser.authMiddleware, addToCart);
  *       404:
  *         description: Panier introuvable
  */
-router.get('/',authenticateUser.authMiddleware,getCart);
+router.get('/',apiLimiter,authenticateUser.authMiddleware,getCart);
 
 /**
  * @swagger
@@ -92,7 +93,7 @@ router.get('/',authenticateUser.authMiddleware,getCart);
  *       404:
  *         description: Produit non trouvé dans le panier
  */
-router.put('/:productId', authenticateUser.authMiddleware,updateCartItem);
+router.put('/:productId',apiLimiter, authenticateUser.authMiddleware,updateCartItem);
 
 /**
  * @swagger
@@ -115,6 +116,6 @@ router.put('/:productId', authenticateUser.authMiddleware,updateCartItem);
  *       404:
  *         description: Produit non trouvé dans le panier
  */
-router.delete('/:productId',authenticateUser.authMiddleware, deleteCartItem);
+router.delete('/:productId',apiLimiter,authenticateUser.authMiddleware, deleteCartItem);
 
 module.exports = router;

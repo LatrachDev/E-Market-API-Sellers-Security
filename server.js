@@ -20,6 +20,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const cartRoutes = require("./routes/cartRoutes");
 const { connect } = require("mongoose");
 const connectDB = require("./config/db");
+const {authLimiter}=require('./middlewares/rate-limiter');
 const { corsOptions } = require('./middlewares/security');
 const cors = require('cors');
 require("dotenv").config();
@@ -60,7 +61,7 @@ const options = {
 app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
-app.use("/auth", authRoutes);
+app.use("/auth",authLimiter, authRoutes);
 app.use("/product", viewRoutes);
 app.use("/carts", cartRoutes);
 app.use("/orders", orderRoutes);
