@@ -57,7 +57,7 @@ router.post('/',authenticateUser.authMiddleware, addToCart);
  *       404:
  *         description: Panier introuvable
  */
-router.get('/', getCart);
+router.get('/',authenticateUser.authMiddleware,getCart);
 
 /**
  * @swagger
@@ -92,7 +92,7 @@ router.get('/', getCart);
  *       404:
  *         description: Produit non trouvé dans le panier
  */
-router.put('/:productId', updateCartItem);
+router.put('/:productId', authenticateUser.authMiddleware,updateCartItem);
 
 /**
  * @swagger
@@ -115,6 +115,6 @@ router.put('/:productId', updateCartItem);
  *       404:
  *         description: Produit non trouvé dans le panier
  */
-router.delete('/:productId', deleteCartItem);
+router.delete('/:productId',authenticateUser.authMiddleware, deleteCartItem);
 
 module.exports = router;

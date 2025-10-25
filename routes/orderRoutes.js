@@ -85,7 +85,7 @@ router.post("/", authenticateUser.authMiddleware, createOrder);
  *       404:
  *         description: Aucune commande trouvée
  */
-router.get("/", getOrders);
+router.get("/",authenticateUser.authMiddleware, getOrders);
 
 /**
  * @swagger

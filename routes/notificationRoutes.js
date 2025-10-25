@@ -94,7 +94,7 @@ const auth = require('../middlewares/auth');
  *         description: Notification non trouvée
  */
 
-router.get('/',auth.authMiddleware, controller.getNotifications);
+router.get('/',auth.authMiddleware,controller.getNotifications);
 
 router.patch('/:id/read', auth.authMiddleware,controller.markAsRead);
 router.patch('/read/all', auth.authMiddleware, controller.markAllAsRead);
