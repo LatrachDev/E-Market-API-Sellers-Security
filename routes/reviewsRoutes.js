@@ -3,11 +3,12 @@ const router = express.Router();
 const ViewsController = require('../controllers/reviewController');
  const Shema=require('../validators/reviewValidation');
  const  validate=require('../middlewares/validate');
- const limiter=require('../middlewares/rate-limiter');
+ const {apiLimiter,strictLimiter}=require('../middlewares/rate-limiter');
  const auth=require('../middlewares/auth');
  
 const controller = new ViewsController();
 const isAdmin=require('../middlewares/isAdmin');
+
 
 /**
  * @swagger
@@ -206,14 +207,14 @@ const isAdmin=require('../middlewares/isAdmin');
  *         description: Avis non trouvé
  */
 
-router.post('/:productId/review',auth.authMiddleware,validate(Shema.createreViewSchema), controller.createreView);
+router.post('/:productId/review',strictLimiter,auth.authMiddleware,validate(Shema.createreViewSchema), controller.createreView);
 
-router.get('/:productId/review',controller.getAllreViews);
-router.put('/:productId/review/:id',auth.authMiddleware, controller.updateUsereView);
-router.delete('/:productId/review/:id',auth.authMiddleware,controller.deleteUsereView)
+router.get('/:productId/review',apiLimiter,controller.getAllreViews);
+router.put('/:productId/review/:id',strictLimiter,auth.authMiddleware ,controller.updateUsereView);
+router.delete('/:productId/review/:id',strictLimiter,auth.authMiddleware,controller.deleteUsereView)
 
 //  router admin :
-router.delete('/review/:id', auth.authMiddleware,isAdmin, controller.deletereViews);
-router.put('/review/:id', auth.authMiddleware, isAdmin, controller.updatereViews);
+router.delete('/review/:id',strictLimiter, auth.authMiddleware,isAdmin, controller.deletereViews);
+router.put('/review/:id', strictLimiter,auth.authMiddleware, isAdmin, controller.updatereViews);
 
 module.exports = router;

@@ -15,7 +15,7 @@ describe("Cart Controller - Integration Tests", () => {
   let req, res;
 
   beforeEach(() => {
-    req = { body: {}, params: {}, user: { _id: "68ee92632cc5727f5c6d0f01" } };
+    req = { body: {}, params: {}, user: { id: "68ee92632cc5727f5c6d0f01" } };
     res = {
       status: sinon.stub().returnsThis(),
       json: sinon.stub().returnsThis(),
