@@ -73,7 +73,7 @@ const couponSchema = new mongoose.Schema({
   versionKey: false //removes the __v version field from documents
 });
 
-couponSchema.index({ code: 1 }, { unique: true }); // in db.. no two coupons can have the same code
+// couponSchema.index({ code: 1 }, { unique: true }); // in db.. no two coupons can have the same code
 
 couponSchema.methods.decrementUse = async function () {
   if (this.usesLeft > 0) {
