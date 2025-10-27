@@ -112,9 +112,9 @@ async function getOneUser(req, res, next) {
 async function createUser(req, res, next) {
   try {
     const { fullname, email, password, role } = req.body;
-    const existingUser = await User.findOne({email});
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-        return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).json({ message: "Email already exists" });
     }
     const createdUser = await User.create({ fullname, email, password, role });
 
@@ -158,4 +158,53 @@ async function deleteUser(req, res, next) {
   }
 }
 
-module.exports = { getUsers, getOneUser, createUser, deleteUser };
+async function promoteUserToSeller(req, res, next) {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: "User not found",
+
+      });
+    }
+    user.role = "seller";
+    await user.save();
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "User promoted to seller",
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function demoteSellerToUser(req, res, next) {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: "User not found",
+      });
+    }
+    user.role = "user";
+    await user.save();
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Seller demoted to user",
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = { getUsers, getOneUser, createUser, deleteUser, promoteUserToSeller, demoteSellerToUser };
