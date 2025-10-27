@@ -22,9 +22,9 @@ const router = express.Router();
 router.get("/",apiLimiter, getProducts);
 router.get("/:id",apiLimiter,getOneProduct);
 
-router.post("/", strictLimiter,authenticateUser.authMiddleware, upload.array("images", 5), validate(createProductSchema), createProduct);
-router.put("/:id", strictLimiter,authenticateUser.authMiddleware, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
+router.post("/", strictLimiter, upload.array("images", 5), validate(createProductSchema), createProduct);
+router.put("/:id", strictLimiter, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
 
-router.delete("/:id",strictLimiter, authenticateUser.authMiddleware, checkProductOwnership, deleteProduct);
+router.delete("/:id",strictLimiter, checkProductOwnership, deleteProduct);
 
 module.exports = router;

@@ -5,9 +5,9 @@ const Product = require("../models/products");
 // add to cart 
 async function addToCart(req, res) {
     try {
-        // 🔹 Récupérer userId depuis le body au lieu de req.user
         const { productId, quantity } = req.body;
         const userId = req.user?.id ;
+        console.log(req.user);
         console.log("userId:", userId);
 
         // Vérifier que userId est bien fourni
@@ -40,10 +40,10 @@ async function addToCart(req, res) {
         );
 
         if (existingItemIndex > -1) {
-            // 🔁 Le produit existe déjà → on augmente la quantité
+            //  Le produit existe déjà on augmente la quantité
             cart.items[existingItemIndex].quantity += quantity;
         } else {
-            // 🆕 Nouveau produit → on l’ajoute
+            // Nouveau produit → on l’ajoute
             cart.items.push({
                 product: productId,
                 quantity,

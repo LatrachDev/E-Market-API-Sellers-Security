@@ -207,14 +207,14 @@ const isAdmin=require('../middlewares/isAdmin');
  *         description: Avis non trouvé
  */
 
-router.post('/:productId/review',strictLimiter,auth.authMiddleware,validate(Shema.createreViewSchema), controller.createreView);
+router.post('/:productId/review',strictLimiter,auth,validate(Shema.createreViewSchema), controller.createreView);
 
 router.get('/:productId/review',apiLimiter,controller.getAllreViews);
-router.put('/:productId/review/:id',strictLimiter,auth.authMiddleware ,controller.updateUsereView);
-router.delete('/:productId/review/:id',strictLimiter,auth.authMiddleware,controller.deleteUsereView)
+router.put('/:productId/review/:id',strictLimiter,auth ,controller.updateUsereView);
+router.delete('/:productId/review/:id',strictLimiter,auth,controller.deleteUsereView)
 
 //  router admin :
-router.delete('/review/:id',strictLimiter, auth.authMiddleware,isAdmin, controller.deletereViews);
-router.put('/review/:id', strictLimiter,auth.authMiddleware, isAdmin, controller.updatereViews);
+router.delete('/review/:id',strictLimiter, auth,isAdmin, controller.deletereViews);
+router.put('/review/:id', strictLimiter,auth, isAdmin, controller.updatereViews);
 
 module.exports = router;
