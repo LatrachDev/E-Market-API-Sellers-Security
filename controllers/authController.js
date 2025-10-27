@@ -2,7 +2,7 @@ const User = require('../models/user');
 const { hashPassword, comparePassword } = require('../services/hash');
 const { generateToken } = require('../services/jwt');
 
-exports.register = async (req, res) => {
+exports.register = async (req, res, next) => {
     const { fullname, email, password } = req.body;
 
     try {
@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
     }
 }
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, nex) => {
     const { email, password } = req.body;
 
     try {

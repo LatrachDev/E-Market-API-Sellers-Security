@@ -24,19 +24,3 @@ module.exports = cartGate = (req, res, next) => {
         next(error);
     }
 }
-
-module.exports = profileGate = (req, res, next) => {
-    try {
-        const userId = req.user.id;
-        if (userId !== req.params.id && req.user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                code: 403,
-                message: "Access denied"
-            });
-        }
-        next();
-    } catch (error) {
-        next(error);
-    }
-};
