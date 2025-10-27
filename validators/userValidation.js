@@ -26,10 +26,18 @@ const loginSchema = yup.object({
   password: yup.string().required("Password is required"),
 });
 
+const updateProfileSchema = yup.object({
+  fullname: yup.string().min(3, "Name must be at least 3 characters").notRequired(),
+  email: yup.string().email("invalid email format").notRequired(),
+  password: yup.string().min(8, "Password must be at least 8 characters").notRequired(),
+});
+
+
 
 module.exports = {
   userSchema,
   registerSchema,
   loginSchema,
+  updateProfileSchema
 };
 

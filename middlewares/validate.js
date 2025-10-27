@@ -3,7 +3,12 @@ const validate = (schema) => async (req, res, next) => {
         await schema.validate(req.body, { abortEarly: false });
         next();
     } catch (error) {
-        res.status(400).json({ errors: error.errors });
+        res.status(400).json({
+            success: false,
+            status: 400,
+            message: "Validation Error",
+            errors: error.errors 
+        });
     }
 }
 
