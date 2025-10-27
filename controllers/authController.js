@@ -2,7 +2,7 @@ const User = require('../models/user');
 const { hashPassword, comparePassword } = require('../services/hash');
 const { generateToken } = require('../services/jwt');
 
-exports.register = async (req, res) => {
+exports.register = async (req, res, next) => {
     const { fullname, email, password } = req.body;
 
     try {
@@ -15,11 +15,11 @@ exports.register = async (req, res) => {
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        next(error)
     }
 }
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     try {
@@ -63,6 +63,6 @@ exports.login = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        next(error);
     }
 }

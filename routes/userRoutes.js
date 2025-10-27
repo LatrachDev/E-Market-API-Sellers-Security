@@ -4,9 +4,9 @@ const validate  = require('../middlewares/validate');
 const userSchema  = require('../validators/userValidation');
 const router = express.Router()
 
-router.get('/', getUsers);
+// router.get('/', getUsers);
 router.get('/:id', getOneUser);
-router.post('/', validate(userSchema), createUser);
+router.post('/', createUser);
 router.delete('/:id', deleteUser);
 
 module.exports = router;

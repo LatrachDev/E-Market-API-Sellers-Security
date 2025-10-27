@@ -119,6 +119,8 @@ async function createUser(req, res, next) {
     const createdUser = await User.create({ fullname, email, password, role });
 
     res.status(201).json({
+      success: true,
+      status: 200,
       message: "user created successfully",
       user: createdUser,
     });
