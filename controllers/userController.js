@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const { hashPassword, comparePassword } = require('../services/hash');
 
 /**
  * @swagger
@@ -112,13 +113,19 @@ async function getOneUser(req, res, next) {
 async function createUser(req, res, next) {
   try {
     const { fullname, email, password, role } = req.body;
+    
     const existingUser = await User.findOne({email});
     if (existingUser) {
-        return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).json({ message: "Email already exists" });
     }
-    const createdUser = await User.create({ fullname, email, password, role });
+
+    const hashedPassword = await hashPassword(password);
+
+    const createdUser = await User.create({ fullname, email, password: hashedPassword, role });
 
     res.status(201).json({
+      success: true,
+      status: 200,
       message: "user created successfully",
       user: createdUser,
     });
