@@ -1,6 +1,6 @@
 const Products = require("../models/products");
 const Category = require("../models/categories");
-
+const NotificationEmitter = require('../events/notificationEmitter');
 // const { file } = require("bun");
 
 /**

@@ -61,14 +61,14 @@ const options = {
 };
 app.use("/users",auth,apiLimiter, userRoutes);
 app.use("/products",auth,apiLimiter, productRoutes);
-app.use("/categories",auth, apiLimiter, categoryRoutes);
+app.use("/categories",auth, categoryRoutes);
 app.use("/auth",authLimiter, authRoutes);
 app.use("/profiles", auth,apiLimiter, profileRoutes);
-app.use("/product",auth,apiLimiter, viewRoutes);
+app.use("/product", viewRoutes);
 app.use("/carts",auth,apiLimiter, cartRoutes);
-app.use("/orders",auth,apiLimiter, orderRoutes);
-app.use('/notifications',auth,apiLimiter, notificationRoutes);
-app.use("/coupons",auth, apiLimiter, couponRoutes);
+app.use("/orders",auth, orderRoutes);
+app.use('/notifications',auth,apiLimiter,notificationRoutes);
+app.use("/coupons",auth,couponRoutes);
 
 app.use("/uploads", express.static("uploads"));
 const specs = swaggerJsdoc(options);

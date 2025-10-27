@@ -42,7 +42,7 @@ const cartGate = require('../middlewares/authorize');
  *       400:
  *         description: Erreur lors de l'ajout au panier
  */
-router.post('/',apiLimiter, cartGate, addToCart);
+router.post('/', cartGate, addToCart);
 
 /**
  * @swagger
@@ -58,7 +58,7 @@ router.post('/',apiLimiter, cartGate, addToCart);
  *       404:
  *         description: Panier introuvable
  */
-router.get('/',apiLimiter,getCart);
+router.get('/',getCart);
 
 /**
  * @swagger
@@ -93,7 +93,7 @@ router.get('/',apiLimiter,getCart);
  *       404:
  *         description: Produit non trouvé dans le panier
  */
-router.put('/:productId',apiLimiter, cartGate, updateCartItem);
+router.put('/:productId', cartGate, updateCartItem);
 
 /**
  * @swagger
@@ -116,6 +116,6 @@ router.put('/:productId',apiLimiter, cartGate, updateCartItem);
  *       404:
  *         description: Produit non trouvé dans le panier
  */
-router.delete('/:productId',apiLimiter, cartGate, deleteCartItem);
+router.delete('/:productId', cartGate, deleteCartItem);
 
 module.exports = router;
