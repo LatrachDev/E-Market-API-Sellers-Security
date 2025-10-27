@@ -2,6 +2,7 @@ const Orders = require("../models/Order");
 const Cart = require("../models/Cart");
 const Product = require("../models/products");
 const Coupon = require("../models/Coupon");
+const NotificationEmitter = require('../events/notificationEmitter');
 
 // ==============================================gestion des commandes==================================================
 
@@ -25,7 +26,7 @@ async function createOrder(req, res, next) {
             return res.status(400).json({ message: "Le panier est vide" });
         }
 
-        // 🧩 Filtrer les produits valides
+        //  Filtrer les produits valides
         const orderItems = cart.items
             .filter(item => item.product)
             .map(item => ({
@@ -43,7 +44,7 @@ async function createOrder(req, res, next) {
         let appliedCoupon = null;
         let discount = 0;
 
-        // 🎟️ Si un code promo est fourni
+        // Si un code promo est fourni
         if (couponCode) {
             const coupon = await Coupon.findOne({
                 code: couponCode.toUpperCase(),
@@ -88,7 +89,7 @@ async function createOrder(req, res, next) {
             appliedCoupon = coupon;
         }
 
-        // ✅ Créer la commande
+        //  Créer la commande
         const order = new Orders({
             user: userId,
             items: orderItems,
@@ -104,8 +105,17 @@ async function createOrder(req, res, next) {
             appliedCoupon.usesLeft -= 1;
             await appliedCoupon.save();
         }
+        if (process.env.NODE_ENV !== "test") {
+            NotificationEmitter.emit('ORDER_PASS', {
+                recipient: userId,
+                orderId: order._id,
+            });
+        }
 
-        // 🛒 Vider le panier
+
+
+
+        //  Vider le panier
         cart.items = [];
         cart.total = 0;
         await cart.save();
@@ -145,8 +155,7 @@ async function simulatePayment(orderId) {
         }, 2000);
     });
 }
-
-// Gère la route API, appelle simulatePayment, met à jour la commande et renvoie la réponse
+ 
 async function simulatePaymentController(req, res) {
     const { orderId } = req.body;
 
@@ -160,7 +169,7 @@ async function simulatePaymentController(req, res) {
         const paymentSuccess = await simulatePayment(orderId);
 
         if (paymentSuccess) {
-            order.status = "paid"; // 🔹 on met à jour le statut
+            order.status = "paid"; //  on met à jour le statut
             order.paymentStatus = "paid";
             await order.save();
             return res.status(200).json({
@@ -182,23 +191,23 @@ async function updateStockAfterOrder(req, res) {
     try {
         const { orderId } = req.body;
 
-        // 1️⃣ Vérifier que l'ID existe
+        //  Vérifier que l'ID existe
         if (!orderId) {
             return res.status(400).json({ message: "L'ID de la commande est requis." });
         }
 
-        // 2️⃣ Trouver la commande
+        //  Trouver la commande
         const order = await Orders.findById(orderId).populate("items.product");
         if (!order) {
             return res.status(404).json({ message: "Commande introuvable." });
         }
 
-        // 3️⃣ Vérifier que la commande est payée
+        //  Vérifier que la commande est payée
         if (order.status !== "paid" && order.paymentStatus !== "paid") {
             return res.status(400).json({ message: "Le paiement n'est pas encore confirmé." });
         }
 
-        // 4️⃣ Parcourir les items et mettre à jour le stock
+        // Parcourir les items et mettre à jour le stock
         for (const item of order.items) {
             const product = item.product;
             if (!product) continue;
@@ -225,6 +234,48 @@ async function updateStockAfterOrder(req, res) {
         res.status(500).json({ message: "Erreur interne du serveur." });
     }
 }
+async function updateOrderStatus(req, res) {
+    try {
+        const { orderId } = req.params;
+        const { newStatus } = req.body;
+        const validStatuses = ['pending', 'paid', 'shipped', 'delivered', 'cancelled'];
+
+        if (!orderId || !newStatus) {
+            return res.status(400).json({ message: "ID de commande et nouveau statut requis." });
+        }
+
+        if (!validStatuses.includes(newStatus)) {
+            return res.status(400).json({ message: "Statut invalide." });
+        }
+
+        const order = await Orders.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ message: "Commande introuvable." });
+        }
+
+        order.status = newStatus;
+        await order.save();
+
+        if (process.env.NODE_ENV !== "test") {
+            NotificationEmitter.emit('ORDER_UPDATED', {
+                recipient: order.user,
+                orderId: order._id,
+                newStatus,
+            });
+
+        }
+
+        res.status(200).json({
+            status: "success",
+            message: `Statut de la commande mis à jour en "${newStatus}".`,
+            order,
+        });
+
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du statut :", error);
+        res.status(500).json({ message: "Erreur interne du serveur." });
+    }
+}
 
 
-module.exports = { createOrder, getOrders, simulatePayment, simulatePaymentController, updateStockAfterOrder };
+module.exports = { createOrder, getOrders, simulatePayment, simulatePaymentController, updateStockAfterOrder, updateOrderStatus };

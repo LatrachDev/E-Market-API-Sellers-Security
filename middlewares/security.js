@@ -5,7 +5,7 @@ const corsOptions = {
   origin: function (origin, callback) {
     console.log('Origin:', origin);
     
-    // ✅ Autoriser les requêtes sans origin (Postman, curl, mobile apps)
+    // accept les requêtes sans origin (Postman, , mobile apps)
     if (!origin) return callback(null, true);
 
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];

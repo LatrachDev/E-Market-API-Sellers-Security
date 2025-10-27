@@ -1,5 +1,6 @@
 const Products = require("../models/products");
 const Category = require("../models/categories");
+
 // const { file } = require("bun");
 
 /**
@@ -57,12 +58,23 @@ const Category = require("../models/categories");
 async function getProducts(req, res, next) {
   try {
     const products = await Products.find();
+    if (!products) {
+      res.status(404).json({
+        success: false,
+        status: 404,
+        message: "no products found",
+        data: null,
+      }); 
+    }
     res.status(200).json({
+      success: true,
+      status: 200,
       message: "all products found",
-      products: products,
+      data: {
+        products: products,
+      }
     });
   } catch (error) {
-    // console.error(error);
     next(error);
   }
 }
@@ -92,11 +104,20 @@ async function getOneProduct(req, res, next) {
     const id = req.params.id;
     const product = await Products.findById(id);
     if (!product) {
-      res.status(400).json({ message: "product not found" });
+      res.status(404).json({
+        success: false,
+        status: 404,
+        message: "product not found",
+        data: null,
+      });
     }
     res.status(200).json({
-      message: "product found succesfully",
-      product: product,
+      success: true,
+      status: 200,
+      message: "product ound succesfully",
+      data: {
+        product: product,
+      }
     });
   } catch (error) {
     next(error);
@@ -128,7 +149,7 @@ async function createProduct(req, res, next) {
     const { title, description, price, stock, categories } = req.body;
     
     console.log("request body fiha hadchi .. :", req.body);
-    const seller = req.user.id;
+    const seller = req.user._id;
     console.log("hahoa seller dyalna :", seller);
 
     const existingProduct = await Products.findOne({ title });
@@ -152,12 +173,23 @@ async function createProduct(req, res, next) {
       categories,
       seller,
       images,
-      isActive: false,
+      isActive: true,
     });
+   if (process.env.NODE_ENV !== "test") {
+NotificationEmitter.emit('NEW_PRODUCT', {
+  recipient: product.seller,
+  productId: product._id,
+  productName: product.title,
+});}
+
     res.status(201).json({
-      message: "product created successfully (awaiting admin approval)",
-      // product: product.toObject(),
-      data: product,
+      success: true,
+      status: 200,
+      message: "product created successfully",
+      status: "success",
+      data: {
+        product: product,
+      }
     });
   } catch (error) {
     next(error);
@@ -220,12 +252,21 @@ async function editProduct(req, res, next) {
     );
 
     if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ 
+        success: false,
+        status: 404,
+        message: "Product not found",
+        data: null,
+       });
     }
     
     res.status(200).json({
+      success: true,
+      status: 200,
       message: "product Updated successfully ",
-      product: updatedProduct,
+      data: {
+        product: updatedProduct,
+      },
     });
   } catch (error) {
     next(error);
@@ -255,8 +296,76 @@ async function editProduct(req, res, next) {
 
 async function deleteProduct(req, res, next) {
   try {
-    await Products.findByIdAndDelete(req.params.id);
-    res.status(200).json("product deleted successfully");
+    const deleteProduct = await Products.findByIdAndDelete(req.params.id);
+
+    if (!deleteProduct) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: "product not found",
+        data: null,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Product deleted successfully",
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function activateProduct(req, res, next) {
+  try {
+    const id = req.params.id;
+    const product = await Products.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.isActive = true;
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      status: 200, 
+      message: "Product activated successfully",
+      data: {
+        product: product,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function deactivationProduct(req, res, next) {
+  try {
+    const id = req.params.id;
+    const product = await Products.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: "product not found",
+        data: null,
+      });
+    }
+
+    product.isActive = false;
+    await product.save();
+
+    res.status(200).json({ 
+      success: true,
+      status: 200,
+      message: "Product deactivated successfully", 
+      data: {
+        product: product,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -268,4 +377,6 @@ module.exports = {
   createProduct,
   editProduct,
   deleteProduct,
+  deactivationProduct,
+  activateProduct,
 };

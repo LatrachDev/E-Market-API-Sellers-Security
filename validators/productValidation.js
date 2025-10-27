@@ -9,7 +9,6 @@ const createProductSchema = yup.object({
   price: yup.number().positive().required("Price is required"),
   stock: yup.number().integer().required("Stock is required").min(0),
   categories: yup.array(yup.string()).required("Category is required"),
-  seller: yup.string().required("Seller ID is required"),
   images: yup.array().of(yup.string().url("Invalid image URL")).nullable().notRequired()
 });
 
