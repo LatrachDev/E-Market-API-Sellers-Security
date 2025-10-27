@@ -23,6 +23,8 @@ const orderSchema = new mongoose.Schema({
   },
   items: [orderItemSchema],
   total: { type: Number, required: true },
+  discountApplied: { type: Number, default: 0 }, // montant de la réduction appliquée
+  coupon: { type: mongoose.Schema.Types.ObjectId, ref: "Coupon", default: null },
   status: {
     type: String,
     enum: ["pending", "paid", "shipped", "delivered", "cancelled"],

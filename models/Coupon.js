@@ -32,7 +32,9 @@ const couponSchema = new mongoose.Schema({
   product_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
-    required: [true, 'Product ID is required'],
+    // required: [true, 'Product ID is required'],
+        required: false, // ✅ le rendre optionnel
+
   },
 
   categories: [

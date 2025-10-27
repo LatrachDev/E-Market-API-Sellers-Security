@@ -151,7 +151,6 @@ async function createCoupon(req, res) {
     }
   }
 
-
 module.exports = {
   createCoupon,
   getAllCoupons,

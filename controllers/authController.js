@@ -8,14 +8,28 @@ exports.register = async (req, res, next) => {
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: 'This email is already taken' });
+            return res.status(400).json({
+                success: false,
+                status: 400,
+                message: 'This email is already taken'
+            });
         }
         const hashedPassword = await hashPassword(password);
         const newUser = new User({ fullname, email, password: hashedPassword });
         await newUser.save();
-        res.status(201).json({ message: 'User registered successfully' });
+        res.status(201).json({
+            success: true,
+            status: 201,
+            message: 'User registered successfully',
+            data: {
+                id: newUser._id,
+                fullname: newUser.fullname,
+                email: newUser.email,
+                role: newUser.role
+            }
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
 }
 
@@ -26,7 +40,8 @@ exports.login = async (req, res, next) => {
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({
-                status: 'error',
+                succress: false,
+                status: 401,
                 message: 'Invalid email or password'
             });
         }
@@ -35,7 +50,8 @@ exports.login = async (req, res, next) => {
         const isPasswordValid = await comparePassword(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({
-                status: "error",
+                success: false,
+                status: 401,
                 message: 'Invalid email or password'
             });
         }
@@ -49,7 +65,7 @@ exports.login = async (req, res, next) => {
 
         // Send response with token
         res.status(200).json({
-            status: 'success',
+            success: true,
             message: 'Login successful',
             data: {
                 jwt: token,

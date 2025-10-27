@@ -1,5 +1,6 @@
 const Products = require("../models/products");
 const Category = require("../models/categories");
+
 // const { file } = require("bun");
 
 /**
@@ -148,7 +149,7 @@ async function createProduct(req, res, next) {
     const { title, description, price, stock, categories } = req.body;
     
     console.log("request body fiha hadchi .. :", req.body);
-    const seller = req.user.id;
+    const seller = req.user._id;
     console.log("hahoa seller dyalna :", seller);
 
     const existingProduct = await Products.findOne({ title });
@@ -174,6 +175,13 @@ async function createProduct(req, res, next) {
       images,
       isActive: true,
     });
+   if (process.env.NODE_ENV !== "test") {
+NotificationEmitter.emit('NEW_PRODUCT', {
+  recipient: product.seller,
+  productId: product._id,
+  productName: product.title,
+});}
+
     res.status(201).json({
       success: true,
       status: 200,

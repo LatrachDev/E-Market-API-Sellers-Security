@@ -14,18 +14,19 @@ const {
   updateProductSchema,
 } = require("../validators/productValidation");
 
-const { authMiddleware } = require("../middlewares/auth");
 const { checkProductOwnership } = require("../middlewares/checkProductOwnership");
+const strictLimiter = require('../middlewares/rate-limiter');
 
 const router = express.Router();
 
 router.get("/", getProducts);
 router.get("/:id", getOneProduct);
 
-router.post("/", authMiddleware, upload.array("images", 5), validate(createProductSchema), createProduct);
-router.put("/:id", authMiddleware, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
+router.post("/", strictLimiter, upload.array("images", 5), validate(createProductSchema), createProduct);
+router.put("/:id", strictLimiter, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
 
-router.delete("/:id", authMiddleware, checkProductOwnership, deleteProduct);
-router.post("/deactivate/:id", authMiddleware, checkProductOwnership, deactivationProduct);
+router.delete("/:id",strictLimiter, checkProductOwnership, deleteProduct);
+router.post("/deactivate/:id", strictLimiter, checkProductOwnership, deactivationProduct);
+
 
 module.exports = router;
