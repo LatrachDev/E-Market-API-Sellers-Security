@@ -38,7 +38,7 @@ const auth = async (req, res, next) => {
     } catch (error) {
 
         next(error);
-        
+
     }
 }
 

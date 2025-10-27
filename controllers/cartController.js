@@ -5,9 +5,10 @@ const Product = require("../models/products");
 // add to cart 
 async function addToCart(req, res) {
     try {
-        // 🔹 Récupérer userId depuis le body au lieu de req.user
         const { productId, quantity } = req.body;
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?.id ;
+        console.log(req.user);
+        console.log("userId:", userId);
 
         // Vérifier que userId est bien fourni
         if (!userId) {
@@ -39,10 +40,10 @@ async function addToCart(req, res) {
         );
 
         if (existingItemIndex > -1) {
-            // 🔁 Le produit existe déjà → on augmente la quantité
+            //  Le produit existe déjà on augmente la quantité
             cart.items[existingItemIndex].quantity += quantity;
         } else {
-            // 🆕 Nouveau produit → on l’ajoute
+            // Nouveau produit → on l’ajoute
             cart.items.push({
                 product: productId,
                 quantity,
@@ -72,8 +73,8 @@ async function addToCart(req, res) {
 // get cart
 async function getCart(req, res) {
     try {
-        // const userId = req.params.userId;
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+     
+        const userId = req.user?._id ;
 
         const cart = await Cart.findOne({ user: userId }).populate("items.product");
         if (!cart) {
@@ -90,7 +91,8 @@ async function getCart(req, res) {
 async function updateCartItem(req, res) {
     try {
         const { productId } = req.params;
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?._id;
+        
         const { quantity } = req.body;
         const cart = await Cart.findOne({ user: userId });
         if (!cart) {
@@ -122,7 +124,7 @@ async function updateCartItem(req, res) {
 async function deleteCartItem(req, res) {
     try {
         const { productId } = req.params;
-        const userId = req.user?.id || "68ee92632cc5727f5c6d0f01";
+        const userId = req.user?._id ;
         const cart = await Cart.findOne({ user: userId });
         if (!cart) {
             return res.status(404).json({ message: "Panier introuvable" });
