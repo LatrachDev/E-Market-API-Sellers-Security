@@ -30,7 +30,7 @@ router.put("/:id", strictLimiter, checkProductOwnership, upload.array("images", 
 router.post("/", strictLimiter, upload.array("images", 5), validate(createProductSchema), createProduct);
 router.put("/:id", strictLimiter, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
 
-router.delete("/:id", authenticateUser, checkProductOwnership, deleteProduct);
+router.delete("/:id", checkProductOwnership, deleteProduct);
 router.patch("/:id/activate", checkProductOwnership, activateProduct);
 router.patch("/:id/deactivate", checkProductOwnership, deactivationProduct);
 
