@@ -19,21 +19,21 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    categories: 
-    [
-      { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Category', 
-        required: true 
-      }
-    ],
-    images: 
-    [
-      {
-        type: String, 
-        trim: true,
-      },
-    ],
+    categories:
+      [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Category',
+          required: true
+        }
+      ],
+    images:
+      [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
     seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -44,13 +44,22 @@ const productSchema = new mongoose.Schema(
       default: false,
     },
     deletedAt: {
-    type: Date,
-    default: null,
+      type: Date,
+      default: null,
     }
-},
-{
-  timestamps: true,
-}
+  },
+  {
+    timestamps: true,
+  }
 );
+
+// Indexes to speed up search and filtering
+// Full-text search on title and description
+productSchema.index({ title: 'text', description: 'text' });
+// Common filters and sorts
+productSchema.index({ price: 1 });
+productSchema.index({ createdAt: -1 });
+productSchema.index({ categories: 1 });
+productSchema.index({ isActive: 1, deletedAt: 1 });
 
 module.exports = mongoose.model("Product", productSchema);
