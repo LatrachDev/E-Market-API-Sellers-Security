@@ -12,9 +12,6 @@ async function createOrder(req, res, next) {
         const userId = req.user?.id;
         const { couponCode } = req.body;
 
-        if (!userId) {
-            return res.status(400).json({ message: "L'ID utilisateur est requis" });
-        }
 
         const cart = await Cart.findOne({ user: userId })
             .populate({
