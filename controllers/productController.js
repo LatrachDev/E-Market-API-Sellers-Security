@@ -58,21 +58,172 @@ const ImageService = require('../services/ImageService');
 
 async function getProducts(req, res, next) {
   try {
-    const products = await Products.find();
-    if (!products) {
-      res.status(404).json({
-        success: false,
-        status: 404,
-        message: "no products found",
-        data: null,
-      }); 
+    // Query params
+    const {
+      q, // keywords
+      category, // single category id
+      categories, // comma-separated category ids
+      minPrice,
+      maxPrice,
+      dateFrom,
+      dateTo,
+      sort, // price, -price, date, -date, popularity, -popularity
+      page = 1,
+      limit = 12,
+    } = req.query;
+
+    const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+    const limitNum = Math.min(Math.max(parseInt(limit, 10) || 12, 1), 100);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Base filters: only active, non-deleted products for public listing
+    const filter = { isActive: true, deletedAt: null };
+
+    // Keyword search - use text index when available
+    let useTextSearch = false;
+    if (q && typeof q === 'string' && q.trim().length > 0) {
+      filter.$text = { $search: q.trim() };
+      useTextSearch = true;
     }
+
+    // Categories filter (single or multiple)
+    const catList = [];
+    if (category) catList.push(category);
+    if (categories) {
+      const parts = Array.isArray(categories) ? categories : String(categories).split(',');
+      parts.forEach((c) => c && catList.push(String(c).trim()))
+    }
+    if (catList.length > 0) {
+      filter.categories = { $in: catList };
+    }
+
+    // Price range
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+
+    // Date range
+    if (dateFrom || dateTo) {
+      filter.createdAt = {};
+      if (dateFrom) filter.createdAt.$gte = new Date(dateFrom);
+      if (dateTo) filter.createdAt.$lte = new Date(dateTo);
+    }
+
+    // Sorting
+    const sortParam = Array.isArray(sort) ? sort[0] : sort; // use first if multiple
+    const sortObj = {};
+    let requiresAggregation = false;
+
+    if (sortParam === 'price') sortObj.price = 1;
+    else if (sortParam === '-price') sortObj.price = -1;
+    else if (sortParam === 'date') sortObj.createdAt = 1;
+    else if (sortParam === '-date') sortObj.createdAt = -1;
+    else if (sortParam === 'popularity' || sortParam === '-popularity') {
+      requiresAggregation = true; // popularity needs review counts
+    } else if (useTextSearch) {
+      // If text search and no explicit sort, sort by relevance first then newest
+      sortObj.score = { $meta: 'textScore' };
+      sortObj.createdAt = -1;
+    } else {
+      // Default sort: newest first
+      sortObj.createdAt = -1;
+    }
+
+    // If sorting by popularity, use aggregation to compute reviewCount
+    if (requiresAggregation) {
+      const popularityDesc = sortParam !== 'popularity'; // true for '-popularity'
+
+      const pipeline = [];
+
+      // $match with filters (including $text when present)
+      pipeline.push({ $match: filter });
+
+      // If text search, add score and possibly order fallback
+      if (useTextSearch) {
+        pipeline.push({ $addFields: { score: { $meta: 'textScore' } } });
+      }
+
+      // Join reviews (collection name inferred from model 'View' -> 'views')
+      pipeline.push(
+        {
+          $lookup: {
+            from: 'views',
+            localField: '_id',
+            foreignField: 'productId',
+            as: 'reviews'
+          }
+        },
+        {
+          $addFields: {
+            reviewCount: { $size: '$reviews' },
+            avgRating: { $cond: [{ $gt: [{ $size: '$reviews' }, 0] }, { $avg: '$reviews.rating' }, null] }
+          }
+        },
+        { $project: { reviews: 0 } }
+      );
+
+      // Sort by popularity (reviewCount), then relevance (if any), then newest
+      const popularitySort = popularityDesc ? -1 : 1;
+      const sortStage = { $sort: { reviewCount: popularitySort, createdAt: -1 } };
+      if (useTextSearch) {
+        sortStage.$sort = { reviewCount: popularitySort, score: -1, createdAt: -1 };
+      }
+      pipeline.push(sortStage);
+
+      // Facet for pagination and total count
+      pipeline.push({
+        $facet: {
+          data: [{ $skip: skip }, { $limit: limitNum }],
+          meta: [{ $count: 'total' }]
+        }
+      });
+
+      const aggRes = await Products.aggregate(pipeline);
+      const data = aggRes[0]?.data || [];
+      const total = aggRes[0]?.meta?.[0]?.total || 0;
+      const totalPages = Math.ceil(total / limitNum) || 1;
+
+      return res.status(200).json({
+        success: true,
+        message: 'Products fetched successfully',
+        data,
+        meta: {
+          page: pageNum,
+          limit: limitNum,
+          total,
+          totalPages,
+          sort: sortParam || (useTextSearch ? 'relevance,-date' : '-date'),
+          filters: { q: q || null, categories: catList, minPrice: minPrice ? Number(minPrice) : null, maxPrice: maxPrice ? Number(maxPrice) : null }
+        }
+      });
+    }
+
+    // Simple find with sorting and pagination
+    const query = Products.find(filter);
+    if (useTextSearch) {
+      query.select({ score: { $meta: 'textScore' } });
+      
+      sortObj.score = { $meta: 'textScore' };
+    }
+    const [data, total] = await Promise.all([
+      query.sort(sortObj).skip(skip).limit(limitNum),
+      Products.countDocuments(filter),
+    ]);
+
+    const totalPages = Math.ceil(total / limitNum) || 1;
     res.status(200).json({
       success: true,
-      status: 200,
-      message: "all products found",
-      data: {
-        products: products,
+      message: 'Products fetched successfully',
+      data,
+      meta: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages,
+        sort: sortParam || (useTextSearch ? 'relevance,-date' : '-date'),
+        filters: { q: q || null, categories: catList, minPrice: minPrice ? Number(minPrice) : null, maxPrice: maxPrice ? Number(maxPrice) : null }
       }
     });
   } catch (error) {
@@ -165,6 +316,7 @@ async function createProduct(req, res, next) {
     if (categoryExists.length !== categories.length) {
       return res.status(404).json({ message: "One or more categories not found" });
     }
+
 
     const product = await Products.create({
       title,
@@ -266,7 +418,7 @@ async function editProduct(req, res, next) {
       id,
       {
         ...req.body,
-        ...(newImages.length > 0 && { images: newImages }), 
+        ...(newImages.length > 0 && { images: newImages }),
       },
       { new: true }
     );
