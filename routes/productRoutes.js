@@ -1,4 +1,6 @@
 const express = require("express");
+const { strictLimiter } = require("../middlewares/rate-limiter");
+
 const upload = require("../middlewares/uploadImages");
 const {
   getProducts,
@@ -7,6 +9,7 @@ const {
   editProduct,
   deleteProduct,
   deactivationProduct,
+  activateProduct
 } = require("../controllers/productController");
 const validate = require("../middlewares/validate");
 const {
@@ -25,6 +28,8 @@ router.get("/:id", getOneProduct);
 router.post("/", strictLimiter, upload.array("images", 5), validate(createProductSchema), createProduct);
 router.put("/:id", strictLimiter, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
 
-router.delete("/:id", authenticateUser, checkProductOwnership, deleteProduct);
+router.delete("/:id", checkProductOwnership, deleteProduct);
+router.patch("/:id/activate", checkProductOwnership, activateProduct);
+router.patch("/:id/deactivate", checkProductOwnership, deactivationProduct);
 
 module.exports = router;
