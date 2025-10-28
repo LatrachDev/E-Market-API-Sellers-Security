@@ -10,6 +10,7 @@ const createLimiter = (windowMs, max, message) => {
     },
     standardHeaders: true,
     legacyHeaders: false,
+     skip: () => process.env.NODE_ENV === "test"
   });
 };
 

@@ -13,6 +13,7 @@ const userSchema = yup.object({
     .string()
     .required("Password is required")
     .min(8, "Password must be at least 8 characters"),
+  role: yup.string().oneOf(["admin", "seller", "user"]),
 });
 
 const registerSchema = yup.object({

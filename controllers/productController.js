@@ -1,6 +1,6 @@
 const Products = require("../models/products");
 const Category = require("../models/categories");
-
+const NotificationEmitter = require('../events/notificationEmitter');
 // const { file } = require("bun");
 
 /**
@@ -255,11 +255,20 @@ async function getOneProduct(req, res, next) {
     const id = req.params.id;
     const product = await Products.findById(id);
     if (!product) {
-      res.status(400).json({ message: "product not found" });
+      res.status(404).json({
+        success: false,
+        status: 404,
+        message: "product not found",
+        data: null,
+      });
     }
     res.status(200).json({
-      message: "product found succesfully",
-      product: product,
+      success: true,
+      status: 200,
+      message: "product ound succesfully",
+      data: {
+        product: product,
+      }
     });
   } catch (error) {
     next(error);
@@ -315,7 +324,7 @@ async function createProduct(req, res, next) {
       categories,
       seller,
       images,
-      isActive: false,
+      isActive: true,
     });
     if (process.env.NODE_ENV !== "test") {
       NotificationEmitter.emit('NEW_PRODUCT', {
@@ -391,12 +400,21 @@ async function editProduct(req, res, next) {
     );
 
     if (!updatedProduct) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ 
+        success: false,
+        status: 404,
+        message: "Product not found",
+        data: null,
+       });
     }
 
     res.status(200).json({
+      success: true,
+      status: 200,
       message: "product Updated successfully ",
-      product: updatedProduct,
+      data: {
+        product: updatedProduct,
+      },
     });
   } catch (error) {
     next(error);
@@ -426,8 +444,76 @@ async function editProduct(req, res, next) {
 
 async function deleteProduct(req, res, next) {
   try {
-    await Products.findByIdAndDelete(req.params.id);
-    res.status(200).json("product deleted successfully");
+    const deleteProduct = await Products.findByIdAndDelete(req.params.id);
+
+    if (!deleteProduct) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: "product not found",
+        data: null,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      status: 200,
+      message: "Product deleted successfully",
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function activateProduct(req, res, next) {
+  try {
+    const id = req.params.id;
+    const product = await Products.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    product.isActive = true;
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      status: 200, 
+      message: "Product activated successfully",
+      data: {
+        product: product,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function deactivationProduct(req, res, next) {
+  try {
+    const id = req.params.id;
+    const product = await Products.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        status: 404,
+        message: "product not found",
+        data: null,
+      });
+    }
+
+    product.isActive = false;
+    await product.save();
+
+    res.status(200).json({ 
+      success: true,
+      status: 200,
+      message: "Product deactivated successfully", 
+      data: {
+        product: product,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -439,4 +525,6 @@ module.exports = {
   createProduct,
   editProduct,
   deleteProduct,
+  deactivationProduct,
+  activateProduct,
 };

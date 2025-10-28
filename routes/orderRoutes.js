@@ -54,6 +54,7 @@ const { role } = require("../middlewares/role");
  *         description: Erreur serveur
  */
 router.post("/", strictLimiter, createOrder);
+router.post("/", strictLimiter, createOrder);
 
 /**
  * @swagger
