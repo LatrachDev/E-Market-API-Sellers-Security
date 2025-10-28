@@ -15,14 +15,14 @@ const couponRoutes = require("./routes/couponRoutes");
 
 
 require('./events/orderListeners');
-require('./events/productListeners'); 
-const requestLogger=require('./middlewares/requestLogger');
+require('./events/productListeners');
+const requestLogger = require('./middlewares/requestLogger');
 
 const logger = require('./middlewares/logger');
 const errorHandler = require("./middlewares/errorHandler");
 const auth = require("./middlewares/auth");
 
-const {authLimiter,apiLimiter}=require('./middlewares/rate-limiter');
+const { authLimiter, apiLimiter } = require('./middlewares/rate-limiter');
 const { corsOptions } = require('./middlewares/security');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -53,22 +53,32 @@ const options = {
         url: "http://localhost:3000",
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
   apis: [
     "./routes/*.js",
     "./controllers/*.js",
-    "./models/*.js" ]
+    "./models/*.js"
+  ]
 };
-app.use("/users",auth,apiLimiter, userRoutes);
-app.use("/products",auth,apiLimiter, productRoutes);
-app.use("/categories",auth, apiLimiter, categoryRoutes);
-app.use("/auth",authLimiter, authRoutes);
-app.use("/profiles", auth,apiLimiter, profileRoutes);
-app.use("/product",auth,apiLimiter, viewRoutes);
-app.use("/carts",auth,apiLimiter, cartRoutes);
-app.use("/orders",auth,apiLimiter, orderRoutes);
-app.use('/notifications',auth,apiLimiter, notificationRoutes);
-app.use("/coupons",auth, apiLimiter, couponRoutes);
+app.use("/users", auth, apiLimiter, userRoutes);
+app.use("/products", auth, apiLimiter, productRoutes);
+app.use("/categories", auth, apiLimiter, categoryRoutes);
+app.use("/auth", authLimiter, authRoutes);
+app.use("/profiles", auth, apiLimiter, profileRoutes);
+app.use("/product", auth, apiLimiter, viewRoutes);
+app.use("/carts", auth, cartRoutes);
+app.use("/orders", auth, orderRoutes);
+app.use('/notifications', auth, apiLimiter, notificationRoutes);
+app.use("/coupons", auth, apiLimiter, couponRoutes);
 
 app.use("/uploads", express.static("uploads"));
 const specs = swaggerJsdoc(options);

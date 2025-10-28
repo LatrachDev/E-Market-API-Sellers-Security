@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const ViewsController = require('../controllers/reviewController');
- const Shema=require('../validators/reviewValidation');
- const  validate=require('../middlewares/validate');
- const {apiLimiter,strictLimiter}=require('../middlewares/rate-limiter');
- const auth=require('../middlewares/auth');
- 
+const Shema = require('../validators/reviewValidation');
+const validate = require('../middlewares/validate');
+const { apiLimiter, strictLimiter } = require('../middlewares/rate-limiter');
+const { role } = require('../middlewares/role');
+
+
+
 const controller = new ViewsController();
-const isAdmin=require('../middlewares/isAdmin');
+
 
 
 /**
@@ -58,6 +60,7 @@ const isAdmin=require('../middlewares/isAdmin');
  *       409:
  *         description: L'utilisateur a déjà laissé un avis
  */
+router.post('/:productId/review', strictLimiter, validate(Shema.createreViewSchema), controller.createreView);
 
 /**
  * @swagger
@@ -78,6 +81,7 @@ const isAdmin=require('../middlewares/isAdmin');
  *       404:
  *         description: Aucun avis trouvé pour ce produit
  */
+router.get('/:productId/review', apiLimiter, controller.getAllreViews);
 
 /**
  * @swagger
@@ -120,6 +124,7 @@ const isAdmin=require('../middlewares/isAdmin');
  *       403:
  *         description: Pas le droit de modifier l'avis d'un autre utilisateur
  */
+router.put('/:productId/review/:id', strictLimiter, controller.updateUsereView);
 
 /**
  * @swagger
@@ -147,6 +152,7 @@ const isAdmin=require('../middlewares/isAdmin');
  *       403:
  *         description: Pas le droit de supprimer l'avis d'un autre utilisateur
  */
+router.delete('/:productId/review/:id', strictLimiter, controller.deleteUsereView)
 
 /**
  * @swagger
@@ -184,6 +190,7 @@ const isAdmin=require('../middlewares/isAdmin');
  *       404:
  *         description: Avis non trouvé
  */
+router.delete('/review/:id', strictLimiter, role("admin"), controller.deletereViews);
 
 /**
  * @swagger
@@ -206,15 +213,6 @@ const isAdmin=require('../middlewares/isAdmin');
  *       404:
  *         description: Avis non trouvé
  */
-
-router.post('/:productId/review',strictLimiter,auth.authMiddleware,validate(Shema.createreViewSchema), controller.createreView);
-
-router.get('/:productId/review',apiLimiter,controller.getAllreViews);
-router.put('/:productId/review/:id',strictLimiter,auth.authMiddleware ,controller.updateUsereView);
-router.delete('/:productId/review/:id',strictLimiter,auth.authMiddleware,controller.deleteUsereView)
-
-//  router admin :
-router.delete('/review/:id',strictLimiter, auth.authMiddleware,isAdmin, controller.deletereViews);
-router.put('/review/:id', strictLimiter,auth.authMiddleware, isAdmin, controller.updatereViews);
+router.put('/review/:id', strictLimiter, role("admin"), controller.updatereViews);
 
 module.exports = router;
