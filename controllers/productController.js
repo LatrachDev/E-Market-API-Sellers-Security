@@ -1,6 +1,7 @@
 const Products = require("../models/products");
 const Category = require("../models/categories");
 const NotificationEmitter = require('../events/notificationEmitter');
+const ImageService = require('../services/ImageService');
 // const { file } = require("bun");
 
 /**
@@ -298,23 +299,24 @@ async function getOneProduct(req, res, next) {
 async function createProduct(req, res, next) {
   try {
     const { title, description, price, stock, categories } = req.body;
-
-    console.log("request body fiha hadchi .. :", req.body);
     const seller = req.user._id;
-    console.log("hahoa seller dyalna :", seller);
 
     const existingProduct = await Products.findOne({ title });
-
     if (existingProduct) {
       return res.status(400).json({ message: "Product already exists" });
     }
 
-    const images = req.files?.map((file) => `/uploads/products/${file.filename}`) || [];
+    // process images with ImageService
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      images = await ImageService.processMultipleImages(req.files);
+    }
 
     const categoryExists = await Category.find({ _id: { $in: categories } });
     if (categoryExists.length !== categories.length) {
-      return res.status(404).json({ message: 'One or more categories not found' });
+      return res.status(404).json({ message: "One or more categories not found" });
     }
+
 
     const product = await Products.create({
       title,
@@ -323,11 +325,12 @@ async function createProduct(req, res, next) {
       stock,
       categories,
       seller,
-      images,
+      images, 
       isActive: true,
     });
+
     if (process.env.NODE_ENV !== "test") {
-      NotificationEmitter.emit('NEW_PRODUCT', {
+      NotificationEmitter.emit("NEW_PRODUCT", {
         recipient: product.seller,
         productId: product._id,
         productName: product.title,
@@ -335,9 +338,10 @@ async function createProduct(req, res, next) {
     }
 
     res.status(201).json({
-      message: "product created successfully (awaiting admin approval)",
-
-      data: product,
+      success: true,
+      status: 200,
+      message: "Product created successfully",
+      data: { product },
     });
   } catch (error) {
     next(error);
@@ -388,7 +392,27 @@ async function createProduct(req, res, next) {
 async function editProduct(req, res, next) {
   try {
     const id = req.params.id;
-    const newImages = req.files?.map((file) => `/uploads/products/${file.filename}`) || [];
+    // const newImages = req.files?.map((file) => `/uploads/products/${file.filename}`) || [];
+
+    const product = await Products.findById(id);
+    
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+    
+    let newImages = [];
+    if (req.files && req.files.length > 0) {
+      // delete old images
+      if (product.images && product.images.length > 0) {
+        for (const img of product.images) {
+          await ImageService.deleteImageFiles(img);
+        }
+      }
+      newImages = await ImageService.processMultipleImages(req.files);
+    }
 
     const updatedProduct = await Products.findByIdAndUpdate(
       id,
@@ -398,16 +422,7 @@ async function editProduct(req, res, next) {
       },
       { new: true }
     );
-
-    if (!updatedProduct) {
-      return res.status(404).json({ 
-        success: false,
-        status: 404,
-        message: "Product not found",
-        data: null,
-       });
-    }
-
+    
     res.status(200).json({
       success: true,
       status: 200,
