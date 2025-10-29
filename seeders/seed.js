@@ -1,4 +1,4 @@
-require("dotenv").config();
+require('dotenv-flow').config();
 const mongoose = require('mongoose');
 const connectDB = require('../config/db');
 const bcrypt = require('bcrypt');
@@ -85,7 +85,7 @@ async function seed() {
     } catch (err) {
         console.error('Seeding failed:', err);
         process.exitCode = 1;
-    } 
+    }
     // finally {
     //     await mongoose.connection.close();
     //     console.log('MongoDB connection closed');

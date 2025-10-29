@@ -7,7 +7,7 @@ const Order = require('../models/Order');
 const Product = require('../models/products');
 const User = require('../models/user');
 const { generateToken } = require('../services/jwt');
-require("dotenv").config();
+require('dotenv-flow').config();
 
 describe('Review Controller - Integration Tests', () => {
   let userToken, adminToken;
@@ -16,8 +16,8 @@ describe('Review Controller - Integration Tests', () => {
 
   // Connexion à la base de données de test avant tous les tests
   before(async () => {
-    const testDbUri = process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/marketSeller_test' || process.env.MONGO_URI ;
-    
+    const testDbUri = process.env.MONGO_URI_TEST || 'mongodb://127.0.0.1:27017/marketSeller_test' || process.env.MONGO_URI;
+
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect(testDbUri);
     }
@@ -84,22 +84,22 @@ describe('Review Controller - Integration Tests', () => {
   });
 
   // Nettoyer après tous les tests
- after(async function() {
-  this.timeout(15000); // Important !
-  
-  try {
-    await Review.deleteMany({});
-    await Order.deleteMany({});
-    await Product.deleteMany({});
-    await User.deleteMany({});
-    
-    if (mongoose.connection.readyState !== 0) {
-      await mongoose.connection.close();
+  after(async function () {
+    this.timeout(15000); // Important !
+
+    try {
+      await Review.deleteMany({});
+      await Order.deleteMany({});
+      await Product.deleteMany({});
+      await User.deleteMany({});
+
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.connection.close();
+      }
+    } catch (error) {
+      console.error('Erreur lors du nettoyage:', error);
     }
-  } catch (error) {
-    console.error('Erreur lors du nettoyage:', error);
-  }
-});
+  });
 
   describe('POST /:productId/review - Create Review', () => {
     afterEach(async () => {
@@ -119,7 +119,7 @@ describe('Review Controller - Integration Tests', () => {
       expect(res.body.status).to.equal('success');
       expect(res.body.data).to.have.property('rating', 5);
       expect(res.body.data).to.have.property('comment', 'Excellent produit!');
-      
+
       createdReviewId = res.body.data._id;
     });
 
@@ -222,7 +222,7 @@ describe('Review Controller - Integration Tests', () => {
 
     it('devrait récupérer tous les avis d\'un produit', async () => {
       const res = await request(app)
-        .get(`/product/${testProduct._id}/review`);
+        .get(`/product/${testProduct._id}/review`).set('Authorization', `Bearer ${userToken}`);
 
       expect(res.status).to.equal(200);
       expect(res.body.data).to.be.an('array');
@@ -242,7 +242,7 @@ describe('Review Controller - Integration Tests', () => {
       });
 
       const res = await request(app)
-        .get(`/product/${newProduct._id}/review`);
+        .get(`/product/${newProduct._id}/review`).set('Authorization', `Bearer ${userToken}`);
 
       expect(res.status).to.equal(404);
       expect(res.body.message).to.include('No reviews found');
