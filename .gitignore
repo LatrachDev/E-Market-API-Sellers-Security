@@ -1,5 +1,5 @@
 node_modules/
 .env
-logs/app.log
-logs/error.log
+/logs/
 logs/
+/logs/app.log
