@@ -7,7 +7,7 @@ const Order = require('../models/Order');
 const Product = require('../models/products');
 const User = require('../models/user');
 const { generateToken } = require('../services/jwt');
-require('dotenv-flow').config();
+// require('dotenv-flow').config();
 
 describe('Review Controller - Integration Tests', () => {
   let userToken, adminToken;

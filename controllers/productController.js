@@ -4,6 +4,58 @@ const NotificationEmitter = require('../events/notificationEmitter');
 const ImageService = require('../services/ImageService');
 // const { file } = require("bun");
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       properties:
+ *         title:
+ *           type: string
+ *           description: The product's title
+ *         description:
+ *           type: string
+ *           description: The product description
+ *         price:
+ *           type: number
+ *           description: The product price
+ *         stock:
+ *           type: number
+ *           description: The product stock
+ *         category_id:
+ *           type: string
+ *           description: The product category id
+ *         imageUrl:
+ *           type: string
+ *           description: The product image
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *
+ *       required:
+ *         - title
+ *         - description
+ *         - price
+ *         - stock
+ *         - category_id
+ */
+
+// get all products
+
+/**
+ * @swagger
+ * /products:
+ *   get:
+ *     summary: get all products
+ *     tags: [Products]
+ *     responses:
+ *       200:
+ *         description: Products got successfully
+ *       500:
+ *         description: Server error
+ */
+
 async function getProducts(req, res, next) {
   try {
     // Query params
@@ -179,6 +231,26 @@ async function getProducts(req, res, next) {
   }
 }
 
+// get a specific product
+/**
+ * @swagger
+ * /products/{id}:
+ *   get:
+ *     summary: get one specific product
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The product ID
+ *     responses:
+ *       200:
+ *         description: product got successfully
+ *       500:
+ *         description: Server error
+ */
 async function getOneProduct(req, res, next) {
   try {
     const id = req.params.id;
@@ -204,6 +276,26 @@ async function getOneProduct(req, res, next) {
   }
 }
 
+// create a product
+/**
+ * @swagger
+ * /products:
+ *   post:
+ *     summary: Create a new product
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       200:
+ *         description: Product created successfully
+ *       500:
+ *         description: Server error
+ */
+
 async function createProduct(req, res, next) {
   try {
     const { title, description, price, stock, categories } = req.body;
@@ -217,7 +309,8 @@ async function createProduct(req, res, next) {
     // process images with ImageService
     let images = [];
     if (req.files && req.files.length > 0) {
-      images = await ImageService.processMultipleImages(req.files);
+      const processedImages = await ImageService.processMultipleImages(req.files);
+      images = processedImages.map(img => img.original.url);
     }
 
     const categoryExists = await Category.find({ _id: { $in: categories } });
@@ -256,6 +349,47 @@ async function createProduct(req, res, next) {
   }
 }
 
+// Edit product
+/**
+ * @swagger
+ * /products/{id}:
+ *   put:
+ *     summary: Update an existing product
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Product ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               stock:
+ *                 type: number
+ *               category:
+ *                 type: string
+ *               imageUrl:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Product updated successfully
+ *       400:
+ *         description: Invalid input or category not found
+ *       500:
+ *         description: Server error
+ */
 async function editProduct(req, res, next) {
   try {
     const id = req.params.id;
@@ -272,13 +406,8 @@ async function editProduct(req, res, next) {
     
     let newImages = [];
     if (req.files && req.files.length > 0) {
-      // delete old images
-      if (product.images && product.images.length > 0) {
-        for (const img of product.images) {
-          await ImageService.deleteImageFiles(img);
-        }
-      }
-      newImages = await ImageService.processMultipleImages(req.files);
+      const processedImages = await ImageService.processMultipleImages(req.files);
+      newImages = processedImages.map(img => img.original.url);
     }
 
     const updatedProduct = await Products.findByIdAndUpdate(
@@ -302,6 +431,27 @@ async function editProduct(req, res, next) {
     next(error);
   }
 }
+
+// Delete product
+/**
+ * @swagger
+ * /products/{id}:
+ *   delete:
+ *     summary: Delete product
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: Product deleted successfully
+ *       500:
+ *         description: Server error
+ */
 
 async function deleteProduct(req, res, next) {
   try {
@@ -378,7 +528,11 @@ async function deactivationProduct(req, res, next) {
   } catch (error) {
     next(error);
   }
+
 }
+async function searchProducts(req, res) {
+};
+
 
 module.exports = {
   getProducts,
@@ -388,4 +542,5 @@ module.exports = {
   deleteProduct,
   deactivationProduct,
   activateProduct,
+    searchProducts
 };
