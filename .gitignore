@@ -1,5 +1,8 @@
+/.env*
 node_modules/
-.env
 /logs/
 logs/
 /logs/app.log
+/coverage/
+coverage/
+.nyc_output/

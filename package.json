@@ -30,6 +30,7 @@
     "jest": "^30.2.0",
     "mocha": "^11.7.4",
     "nodemon": "^3.1.10",
+    "nyc": "^17.1.0",
     "sinon": "^21.0.0",
     "supertest": "^7.1.4"
   },
@@ -46,6 +47,9 @@
     "test:integ:review": "mocha test/reviews.integ.test.js --timeout 10000 --require ./test/setup.env.js",
     "test:integ:order": "mocha test/order.integ.test.js --timeout 10000 --require ./test/setup.env.js",
     "test:integ:cart": "mocha test/cart.integ.test.js --timeout 10000 --require ./test/setup.env.js",
+    "coverage": "nyc mocha --exit --timeout 10000",
+    "coverage:html": "nyc --reporter=html mocha --exit --timeout 10000",
+    "coverage:json": "nyc --reporter=json mocha --exit --timeout 10000",
     "docker:up": "docker-compose up -d --build",
     "docker:down": "docker-compose down -v"
   },
