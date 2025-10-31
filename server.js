@@ -1,3 +1,4 @@
+require('dotenv-flow').config();
 const express = require("express");
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
@@ -28,7 +29,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 
 const connectDB = require("./config/db");
-require("dotenv").config();
 const app = express();
 app.use(requestLogger);
 
@@ -50,7 +50,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
+        url: `http://localhost:${process.env.PORT || 6000}`,
       },
     ],
     components: {
@@ -101,7 +101,7 @@ async function run() {
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 6000;
 app.listen(PORT, () => {
   run();
   console.log(`Server running on port ${PORT}`);
