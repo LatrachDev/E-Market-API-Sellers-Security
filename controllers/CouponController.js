@@ -23,7 +23,7 @@ async function createCoupon(req, res) {
       discount,
       expirationDate,
       product_id,
-      categories,
+      categories, 
       seller,
       usesLeft,
     });
