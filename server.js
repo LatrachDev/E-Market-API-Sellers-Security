@@ -30,6 +30,10 @@ const helmet = require('helmet');
 
 const connectDB = require("./config/db");
 const app = express();
+
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/admin", adminRoutes);
+
 app.use(requestLogger);
 
 app.use(express.json());

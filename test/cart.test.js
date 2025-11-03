@@ -7,7 +7,7 @@ const Product = require("../models/products");
 
 describe("Cart Controller", () => {
   let req, res;
-
+// beforeEach() est une fonction fournie par Mocha qui s’exécute avant chaque test
   beforeEach(() => {
     req = {
       user: { id: "user123" },
@@ -15,12 +15,19 @@ describe("Cart Controller", () => {
       params: {}
     };
     res = {
+      // sinon.stub() creer une faux function 
+      // .returnsThis() → quand on l’appelle, elle retourne l’objet res
       status: sinon.stub().returnsThis(),
       json: sinon.stub()
     };
   });
+// afterEach() est une fonction de Mocha.
 
+// Elle s’exécute après chaque test (it(...))
+
+// Elle sert à nettoyer / réinitialiser ce que tu as modifié pendant le test.
   afterEach(() => {
+    // Il remet toutes les fonctions stubées à leur état d’origine.
     sinon.restore();
   });
 
