@@ -43,7 +43,7 @@ const { strictLimiter } = require('../middlewares/rate-limiter');
  *       400:
  *         description: Erreur lors de l'ajout au panier
  */
-router.post('/', strictLimiter, cartGate, addToCart);
+router.post('/', strictLimiter, addToCart);
 
 /**
  * @swagger
