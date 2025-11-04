@@ -1,4 +1,4 @@
-const cart = require('../models/Cart');
+const Cart = require('../models/Cart');
 
 
 module.exports = cartGate = (req, res, next) => {

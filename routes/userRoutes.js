@@ -6,10 +6,10 @@ const { registerSchema } = require("../validators/userValidation");
 const router = express.Router()
 
 router.get('/', getUsers);
-router.get('/:id', getOneUser);
 router.post('/', validate(registerSchema), createUser);
 router.delete('/:id', deleteUser);
 router.put('/promote/:id', promoteUserToSeller);
 router.put('/demote/:id', demoteSellerToUser);
+router.get('/:id', getOneUser);
 
 module.exports = router;
