@@ -111,7 +111,7 @@ router.get("/:id", getOneProduct);
  *       500:
  *         description: Server error
  */
-router.post("/", strictLimiter, upload.array("images", 5), validate(createProductSchema), createProduct);
+router.post("/", upload.array("images", 5), validate(createProductSchema), createProduct);
 
 /**
  * @swagger

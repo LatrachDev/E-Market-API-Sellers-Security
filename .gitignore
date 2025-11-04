@@ -1,5 +1,11 @@
-node_modules/
 .env
+node_modules/
 /logs/
 logs/
 /logs/app.log
+/coverage/
+coverage/
+.nyc_output/
+.env.test
+.env.production
+.env.development

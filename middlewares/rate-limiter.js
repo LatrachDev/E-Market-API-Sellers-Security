@@ -17,7 +17,7 @@ const createLimiter = (windowMs, max, message) => {
 //  create des limiters
 const authLimiter = createLimiter(
   15 * 60 * 1000, // 15 minutes
-  5, 
+  15, 
   'Trop de tentatives de connexion, veuillez réessayer plus tard'
 );
 
