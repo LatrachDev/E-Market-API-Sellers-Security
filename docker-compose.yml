@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   api:
     build:
@@ -10,6 +12,7 @@ services:
       - "3002:3002"
     depends_on:
       - mongo
+      - redis
     restart: unless-stopped
 
   mongo:
@@ -20,17 +23,6 @@ services:
     volumes:
       - mongo-data:/data/db
     restart: unless-stopped
-
-  # mongo-express:
-  #   image: mongo-express
-  #   environment:
-  #     - ME_CONFIG_MONGODB_SERVER=mongo
-  #     - ME_CONFIG_MONGODB_URL=mongodb://mongo:27017
-  #   ports:
-  #     - "8081:8081"
-  #   depends_on:
-  #     - mongo
-  #   restart: unless-stopped
 
   mongo-express:
     image: mongo-express
@@ -45,6 +37,12 @@ services:
       - mongo
     restart: unless-stopped
 
+  redis:
+    image: redis:latest
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
 
 volumes:
   mongo-data:

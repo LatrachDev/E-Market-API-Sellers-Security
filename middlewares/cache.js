@@ -12,7 +12,7 @@ const cacheMiddleware = (duration = 300) => {
     const key = req.originalUrl || req.url;
     
     // Vérifier si la réponse est en cache
-    const cachedResponse = cache.get(key);
+    const cachedResponse = cache.get(key);av
     
     if (cachedResponse) {
       console.log(`Cache HIT pour: ${key}`);

@@ -29,6 +29,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const { cacheMiddleware } = require('./middlewares/cache');
+const cacheManager=require('./middlewares/cacheredis');
 
 const connectDB = require("./config/db");
 const app = express();
@@ -73,8 +74,8 @@ const options = {
   ]
 };
 app.use("/users", auth, apiLimiter, userRoutes);
-app.use("/products", auth, apiLimiter, cacheMiddleware(600), productRoutes); // Cache 10 min
-app.use("/categories", auth, apiLimiter, cacheMiddleware(900), categoryRoutes); // Cache 15 min
+app.use("/products", auth, apiLimiter, cacheManager(600), productRoutes); 
+app.use("/categories", auth, apiLimiter, cacheManager(900), categoryRoutes);
 app.use("/auth", authLimiter, authRoutes);
 app.use("/profiles", auth, apiLimiter, profileRoutes);
 app.use("/product", auth, apiLimiter, viewRoutes);
