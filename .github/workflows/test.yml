@@ -1,4 +1,4 @@
-name: Lint et formatage
+name: test
 
 on:
   push:
@@ -7,8 +7,9 @@ on:
     branches: ['**']
 
 jobs:
-  lint-format:
+  test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -19,8 +20,10 @@ jobs:
 
       - run: npm ci
 
-      - name: Exécuter ESLint
-        run: npm run lint
-
-      - name: Exécuter Prettier
-        run: npm run format --check
+      - name: Run Mocha
+        env:
+          NODE_ENV: test
+          PORT: 3001
+          MONGO_URI: mongodb://localhost:27017/e_market_test
+          JWT_secret: test_secret_jwt
+        run: npm run test
