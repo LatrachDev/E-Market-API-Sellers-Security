@@ -1,9 +1,14 @@
-const express = require("express");
-const { createOrder, getOrders, simulatePaymentController, updateStockAfterOrder, updateOrderStatus } = require("../controllers/orderController");
-const router = express.Router();
-const { apiLimiter, strictLimiter } = require('../middlewares/rate-limiter');
-const { role } = require("../middlewares/role");
-
+const express = require('express')
+const {
+  createOrder,
+  getOrders,
+  simulatePaymentController,
+  updateStockAfterOrder,
+  updateOrderStatus,
+} = require('../controllers/orderController')
+const router = express.Router()
+const { apiLimiter, strictLimiter } = require('../middlewares/rate-limiter')
+const { role } = require('../middlewares/role')
 
 /**
  * @swagger
@@ -53,8 +58,8 @@ const { role } = require("../middlewares/role");
  *       500:
  *         description: Erreur serveur
  */
-router.post("/", strictLimiter, createOrder);
-router.post("/", strictLimiter, createOrder);
+router.post('/', strictLimiter, createOrder)
+router.post('/', strictLimiter, createOrder)
 
 /**
  * @swagger
@@ -81,7 +86,7 @@ router.post("/", strictLimiter, createOrder);
  *       500:
  *         description: Erreur serveur
  */
-router.get("/", apiLimiter, getOrders);
+router.get('/', apiLimiter, getOrders)
 
 /**
  * @swagger
@@ -130,7 +135,7 @@ router.get("/", apiLimiter, getOrders);
  *       500:
  *         description: Erreur serveur
  */
-router.post("/simulate-payment", strictLimiter, simulatePaymentController);
+router.post('/simulate-payment', strictLimiter, simulatePaymentController)
 
 /**
  * @swagger
@@ -170,7 +175,7 @@ router.post("/simulate-payment", strictLimiter, simulatePaymentController);
  *       500:
  *         description: Erreur serveur
  */
-router.put("/", strictLimiter, updateStockAfterOrder);
+router.put('/', strictLimiter, updateStockAfterOrder)
 
 /**
  * @swagger
@@ -221,6 +226,6 @@ router.put("/", strictLimiter, updateStockAfterOrder);
  *       500:
  *         description: Erreur serveur
  */
-router.put("/:orderId/status", strictLimiter, role("admin"), updateOrderStatus);
+router.put('/:orderId/status', strictLimiter, role('admin'), updateOrderStatus)
 
-module.exports = router;
+module.exports = router

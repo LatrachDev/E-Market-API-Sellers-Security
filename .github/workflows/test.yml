@@ -1,0 +1,29 @@
+name: test
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Run Mocha
+        env:
+          NODE_ENV: test
+          PORT: 3001
+          MONGO_URI: mongodb://localhost:27017/e_market_test
+          JWT_secret: test_secret_jwt
+        run: npm run test

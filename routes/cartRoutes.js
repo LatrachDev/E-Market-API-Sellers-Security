@@ -1,10 +1,13 @@
-const express = require('express');
-const { addToCart, getCart, updateCartItem, deleteCartItem } = require('../controllers/cartController');
-const router = express.Router();
-const cartGate = require('../middlewares/authorize');
-const { strictLimiter } = require('../middlewares/rate-limiter');
-
-
+const express = require('express')
+const {
+  addToCart,
+  getCart,
+  updateCartItem,
+  deleteCartItem,
+} = require('../controllers/cartController')
+const router = express.Router()
+const cartGate = require('../middlewares/authorize')
+const { strictLimiter } = require('../middlewares/rate-limiter')
 
 /**
  * @swagger
@@ -43,7 +46,7 @@ const { strictLimiter } = require('../middlewares/rate-limiter');
  *       400:
  *         description: Erreur lors de l'ajout au panier
  */
-router.post('/', strictLimiter, addToCart);
+router.post('/', strictLimiter, addToCart)
 
 /**
  * @swagger
@@ -59,7 +62,7 @@ router.post('/', strictLimiter, addToCart);
  *       404:
  *         description: Panier introuvable
  */
-router.get('/', cartGate, getCart);
+router.get('/', cartGate, getCart)
 
 /**
  * @swagger
@@ -94,7 +97,7 @@ router.get('/', cartGate, getCart);
  *       404:
  *         description: Produit non trouvé dans le panier
  */
-router.put('/:productId', strictLimiter, cartGate, updateCartItem);
+router.put('/:productId', strictLimiter, cartGate, updateCartItem)
 
 /**
  * @swagger
@@ -117,6 +120,6 @@ router.put('/:productId', strictLimiter, cartGate, updateCartItem);
  *       404:
  *         description: Produit non trouvé dans le panier
  */
-router.delete('/:productId', strictLimiter, cartGate, deleteCartItem);
+router.delete('/:productId', strictLimiter, cartGate, deleteCartItem)
 
-module.exports = router;
+module.exports = router
