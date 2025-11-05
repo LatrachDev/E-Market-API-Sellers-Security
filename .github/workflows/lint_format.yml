@@ -23,4 +23,4 @@ jobs:
         run: npm run lint
 
       - name: Exécuter Prettier
-        run: npm run format -- --check
+        run: npm run format

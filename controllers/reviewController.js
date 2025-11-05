@@ -2,7 +2,7 @@ const Review = require('../models/review')
 const Order = require('../models/Order')
 
 class ViewsController {
-  createreView = async (req, res) => {
+  async createreView(req, res) {
     try {
       const userId = req.user._id
       console.log(userId)
@@ -52,7 +52,7 @@ class ViewsController {
     }
   }
 
-  getAllreViews = async (req, res) => {
+  async getAllreViews(req, res) {
     console.log('productId', req.params.productId)
     try {
       const allreViews = await Review.find({
@@ -78,7 +78,7 @@ class ViewsController {
     }
   }
 
-  updateUsereView = async (req, res) => {
+  async updateUsereView(req, res) {
     const userId = req.user._id
     console.log('req.params', req.params)
     try {
@@ -113,7 +113,7 @@ class ViewsController {
     }
   }
 
-  updatereViews = async (req, res) => {
+  async updatereViews(req, res) {
     const reviewId = req.params.id
     try {
       const reViewUpdate = await Review.findOneAndUpdate(
@@ -141,7 +141,7 @@ class ViewsController {
     }
   }
 
-  deleteUsereView = async (req, res) => {
+  async deleteUsereView(req, res) {
     const where = {
       _id: req.params.id,
       productId: req.params.productId,
@@ -182,7 +182,7 @@ class ViewsController {
     }
   }
 
-  deletereViews = async (req, res) => {
+  async deletereViews(req, res) {
     try {
       const review = await Review.findById({ _id: req.params.id })
 
