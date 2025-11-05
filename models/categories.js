@@ -22,8 +22,8 @@ const categorySchema = new mongoose.Schema(
 )
 
 // indexes to speed up search and filtering
-categorySchema.index({ name: 1 });
-categorySchema.index({ createdAt: 1 });
-categorySchema.index({ updatedAt: 1 });
-categorySchema.index({ deletedAt: 1 });
-module.exports = mongoose.model('Category', categorySchema);
+categorySchema.index({ name: 1 })
+categorySchema.index({ createdAt: 1 })
+categorySchema.index({ updatedAt: 1 })
+categorySchema.index({ deletedAt: 1 })
+module.exports = mongoose.model('Category', categorySchema)

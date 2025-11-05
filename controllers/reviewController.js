@@ -24,8 +24,8 @@ class ViewsController {
       }
 
       const existingreView = await Review.findOne({
-        userId: userId,
-        productId: productId,
+        userId,
+        productId,
       })
 
       if (existingreView) {
@@ -38,8 +38,8 @@ class ViewsController {
       const newreView = await Review.create({
         rating: req.body.rating,
         comment: req.body.comment,
-        productId: productId,
-        userId: userId,
+        productId,
+        userId,
       })
 
       return res.status(201).json({
@@ -85,7 +85,7 @@ class ViewsController {
       const updated = await Review.findOneAndUpdate(
         {
           _id: req.params.id,
-          userId: userId,
+          userId,
           productId: req.params.productId,
         },
         {

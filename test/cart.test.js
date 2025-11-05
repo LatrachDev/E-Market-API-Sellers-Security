@@ -20,14 +20,14 @@ describe('Cart Controller', () => {
       params: {},
     }
     res = {
-      // sinon.stub() creer une faux function 
+      // sinon.stub() creer une faux function
       // .returnsThis() → quand on l’appelle, elle retourne l’objet res
       status: sinon.stub().returnsThis(),
       json: sinon.stub(),
     }
   })
 
-// Elle sert à nettoyer / réinitialiser ce que tu as modifié pendant le test.
+  // Elle sert à nettoyer / réinitialiser ce que tu as modifié pendant le test.
   afterEach(() => {
     sinon.restore()
   })

@@ -3,7 +3,6 @@ const path = require('path')
 const fs = require('fs')
 
 class ImageService {
-
   constructor() {
     this.baseDir = 'uploads/products'
     this.sizes = {
@@ -25,7 +24,7 @@ class ImageService {
       path.join(this.baseDir, 'small'),
       path.join(this.baseDir, 'medium'),
       path.join(this.baseDir, 'large'),
-    ];
+    ]
 
     for (const dir of dirs) {
       if (!fs.existsSync(dir)) {
@@ -38,11 +37,11 @@ class ImageService {
    * Generate a unique file name
    */
   generateFilename(originalName, size = 'original') {
-    const ext = path.extname(originalName);
-    const name = path.basename(originalName, ext);
-    const timestamp = Date.now();
-    const random = Math.round(Math.random() * 1E9);
-    return `${name}-${timestamp}-${random}-${size}${ext}`;
+    const ext = path.extname(originalName)
+    const name = path.basename(originalName, ext)
+    const timestamp = Date.now()
+    const random = Math.round(Math.random() * 1e9)
+    return `${name}-${timestamp}-${random}-${size}${ext}`
   }
 
   /**
@@ -52,31 +51,28 @@ class ImageService {
     try {
       await this.createDirectories()
 
-      if (!file) throw new Error('File is missing');
+      if (!file) throw new Error('File is missing')
 
       // Support both memoryStorage (buffer) and diskStorage (path)
       const input = file.buffer
         ? file.buffer
-        : (file.path && fs.existsSync(file.path))
+        : file.path && fs.existsSync(file.path)
           ? fs.readFileSync(file.path)
-          : null;
+          : null
 
-      if (!input) throw new Error('Invalid input: file buffer/path not found');
+      if (!input) throw new Error('Invalid input: file buffer/path not found')
 
-      const originalName = file.originalname || 'unnamed';
-      const originalFilename = this.generateFilename(originalName, 'original');
-      const originalPath = path.join(this.baseDir, 'original', originalFilename);
+      const originalName = file.originalname || 'unnamed'
+      const originalFilename = this.generateFilename(originalName, 'original')
+      const originalPath = path.join(this.baseDir, 'original', originalFilename)
 
       // Save original image
-      await sharp(input)
-        .jpeg({ quality: 90 })
-        .toFile(originalPath);
+      await sharp(input).jpeg({ quality: 90 }).toFile(originalPath)
 
       const processedImages = {
         original: {
           url: `/uploads/products/original/${originalFilename}`,
           filename: originalFilename,
-          originalName,
           originalName,
           size: file.size,
           mimetype: file.mimetype,
@@ -100,7 +96,6 @@ class ImageService {
         processedImages[sizeName] = {
           url: `/uploads/products/${sizeName}/${filename}`,
           filename,
-          filename,
           width: dimensions.width,
           height: dimensions.height,
           size: fs.statSync(outputPath).size,
@@ -109,8 +104,8 @@ class ImageService {
 
       return processedImages
     } catch (error) {
-      console.error('❌ Error processing image:', error);
-      throw new Error(`Image processing failed: ${error.message}`);
+      console.error('❌ Error processing image:', error)
+      throw new Error(`Image processing failed: ${error.message}`)
     }
   }
 
@@ -118,33 +113,33 @@ class ImageService {
    * Process multiple images
    */
   async processMultipleImages(files = []) {
-    const results = [];
+    const results = []
 
     for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const processed = await this.processImage(file);
-      processed.original.isMain = i === 0; // First image is main
-      results.push(processed);
+      const file = files[i]
+      const processed = await this.processImage(file)
+      processed.original.isMain = i === 0 // First image is main
+      results.push(processed)
     }
 
-    return results;
+    return results
   }
 
   /**
    * Get all image URLs (with optional base URL)
    */
   getImageUrls(processedImages, baseUrl = 'http://localhost:3000') {
-    const urls = {};
+    const urls = {}
 
     for (const [size, data] of Object.entries(processedImages)) {
       if (data.url) {
         urls[size] = data.url.startsWith('/')
           ? `${baseUrl}${data.url}`
-          : data.url;
+          : data.url
       }
     }
 
-    return urls;
+    return urls
   }
 
   /**
@@ -161,7 +156,7 @@ class ImageService {
         }
       }
     } catch (error) {
-      console.error('❌ Error deleting image files:', error);
+      console.error('❌ Error deleting image files:', error)
     }
   }
 
@@ -172,9 +167,9 @@ class ImageService {
     const defaultOptions = {
       width: 800,
       height: 600,
-      quality: 85
-    };
-    const config = { ...defaultOptions, ...options };
+      quality: 85,
+    }
+    const config = { ...defaultOptions, ...options }
 
     await sharp(inputPath)
       .resize(config.width, config.height, {
@@ -206,10 +201,10 @@ class ImageService {
         density: metadata.density,
       }
     } catch (error) {
-      console.error('❌ Error getting image metadata:', error);
-      return null;
+      console.error('❌ Error getting image metadata:', error)
+      return null
     }
   }
 }
 
-module.exports = new ImageService();
+module.exports = new ImageService()

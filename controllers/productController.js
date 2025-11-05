@@ -383,9 +383,7 @@ async function deactivationProduct(req, res, next) {
   } catch (error) {
     next(error)
   }
-
 }
-
 
 async function searchProducts(req, res) {
   try {
@@ -443,7 +441,7 @@ async function searchProducts(req, res) {
         .skip(skip)
         .limit(limitNum)
         .select(projection)
-        .lean()  
+        .lean()
         .exec(),
       Product.countDocuments(filter).exec(),
     ])
