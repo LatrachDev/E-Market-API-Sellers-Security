@@ -1,7 +1,7 @@
-const express = require("express");
-const { strictLimiter } = require("../middlewares/rate-limiter");
+const express = require('express')
+const { strictLimiter } = require('../middlewares/rate-limiter')
 
-const upload = require("../middlewares/uploadImages");
+const upload = require('../middlewares/uploadImages')
 const {
   getProducts,
   getOneProduct,
@@ -9,18 +9,19 @@ const {
   editProduct,
   deleteProduct,
   deactivationProduct,
-  activateProduct
-} = require("../controllers/productController");
-const validate = require("../middlewares/validate");
+  activateProduct,
+} = require('../controllers/productController')
+const validate = require('../middlewares/validate')
 const {
   createProductSchema,
   updateProductSchema,
-} = require("../validators/productValidation");
+} = require('../validators/productValidation')
 
+const {
+  checkProductOwnership,
+} = require('../middlewares/checkProductOwnership')
 
-const { checkProductOwnership } = require("../middlewares/checkProductOwnership");
-
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get("/", getProducts);
+router.get('/', getProducts)
 
 /**
  * @swagger
@@ -91,7 +92,7 @@ router.get("/", getProducts);
  *       500:
  *         description: Server error
  */
-router.get("/:id", getOneProduct);
+router.get('/:id', getOneProduct)
 
 /**
  * @swagger
@@ -111,7 +112,13 @@ router.get("/:id", getOneProduct);
  *       500:
  *         description: Server error
  */
-router.post("/", strictLimiter, upload.array("images", 5), validate(createProductSchema), createProduct);
+router.post(
+  '/',
+  strictLimiter,
+  upload.array('images', 5),
+  validate(createProductSchema),
+  createProduct
+)
 
 /**
  * @swagger
@@ -153,7 +160,14 @@ router.post("/", strictLimiter, upload.array("images", 5), validate(createProduc
  *       500:
  *         description: Server error
  */
-router.put("/:id", strictLimiter, checkProductOwnership, upload.array("images", 5), validate(updateProductSchema), editProduct);
+router.put(
+  '/:id',
+  strictLimiter,
+  checkProductOwnership,
+  upload.array('images', 5),
+  validate(updateProductSchema),
+  editProduct
+)
 
 /**
  * @swagger
@@ -174,8 +188,8 @@ router.put("/:id", strictLimiter, checkProductOwnership, upload.array("images", 
  *       500:
  *         description: Server error
  */
-router.delete("/:id", checkProductOwnership, deleteProduct);
-router.patch("/:id/activate", checkProductOwnership, activateProduct);
-router.patch("/:id/deactivate", checkProductOwnership, deactivationProduct);
+router.delete('/:id', checkProductOwnership, deleteProduct)
+router.patch('/:id/activate', checkProductOwnership, activateProduct)
+router.patch('/:id/deactivate', checkProductOwnership, deactivationProduct)
 
-module.exports = router;
+module.exports = router

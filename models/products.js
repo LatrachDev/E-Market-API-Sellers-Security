@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const productSchema = new mongoose.Schema(
   {
@@ -19,24 +19,22 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    categories:
-      [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Category',
-          required: true
-        }
-      ],
-    images:
-      [
-        {
-          type: String,
-          trim: true,
-        },
-      ],
+    categories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true,
+      },
+    ],
+    images: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
     seller: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     isActive: {
@@ -46,20 +44,20 @@ const productSchema = new mongoose.Schema(
     deletedAt: {
       type: Date,
       default: null,
-    }
+    },
   },
   {
     timestamps: true,
   }
-);
+)
 
 // Indexes to speed up search and filtering
 // Full-text search on title and description
-productSchema.index({ title: 'text', description: 'text' });
+productSchema.index({ title: 'text', description: 'text' })
 // Common filters and sorts
-productSchema.index({ price: 1 });
-productSchema.index({ createdAt: -1 });
-productSchema.index({ categories: 1 });
-productSchema.index({ isActive: 1, deletedAt: 1 });
+productSchema.index({ price: 1 })
+productSchema.index({ createdAt: -1 })
+productSchema.index({ categories: 1 })
+productSchema.index({ isActive: 1, deletedAt: 1 })
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model('Product', productSchema)

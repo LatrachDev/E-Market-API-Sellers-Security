@@ -1,4 +1,4 @@
-const Categories = require("../models/categories");
+const Categories = require('../models/categories')
 
 /**
  * @swagger
@@ -31,13 +31,13 @@ const Categories = require("../models/categories");
 
 async function getCategories(req, res, next) {
   try {
-    const categories = await Categories.find();
+    const categories = await Categories.find()
     res.status(200).json({
-      message: "all categories found",
-      categories: categories,
-    });
+      message: 'all categories found',
+      categories,
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
@@ -63,17 +63,17 @@ async function getCategories(req, res, next) {
  */
 async function getOneCategory(req, res, next) {
   try {
-    const id = req.params.id;
-    const category = await Categories.findById(id);
+    const id = req.params.id
+    const category = await Categories.findById(id)
     if (!category) {
-      res.status(400).json({ message: "category not found" });
+      res.status(400).json({ message: 'category not found' })
     }
     res.status(200).json({
-      message: "category found succesfully",
-      category: category,
-    });
+      message: 'category found succesfully',
+      category,
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
@@ -98,20 +98,20 @@ async function getOneCategory(req, res, next) {
  */
 async function createCategory(req, res, next) {
   try {
-    const { name } = req.body;
-    const existingCategory = await Categories.findOne({ name });
+    const { name } = req.body
+    const existingCategory = await Categories.findOne({ name })
     if (existingCategory) {
-      return res.status(400).json({ message: "Category name must be unique" });
+      return res.status(400).json({ message: 'Category name must be unique' })
     }
     const category = await Categories.create({
       name,
-    });
+    })
     res.status(201).json({
-      message: "product created successfully",
+      message: 'product created successfully',
       category: category.toObject(),
-    });
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
@@ -148,20 +148,20 @@ async function createCategory(req, res, next) {
  */
 async function updateCategory(req, res, next) {
   try {
-    const id = req.params.id;
+    const id = req.params.id
     const category = await Categories.findByIdAndUpdate(
       id,
       {
         name: req.body.name,
       },
       { new: true }
-    );
+    )
     res.status(200).json({
-      message: "category updated succesfully",
-      category: category,
-    });
+      message: 'category updated succesfully',
+      category,
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
@@ -188,10 +188,10 @@ async function updateCategory(req, res, next) {
 
 async function deleteCategory(req, res, next) {
   try {
-    await Categories.findByIdAndDelete(req.params.id);
-    res.status(200).json("category deleted successfully");
+    await Categories.findByIdAndDelete(req.params.id)
+    res.status(200).json('category deleted successfully')
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
@@ -201,4 +201,4 @@ module.exports = {
   createCategory,
   updateCategory,
   deleteCategory,
-};
+}

@@ -1,16 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const ViewsController = require('../controllers/reviewController');
-const Shema = require('../validators/reviewValidation');
-const validate = require('../middlewares/validate');
-const { apiLimiter, strictLimiter } = require('../middlewares/rate-limiter');
-const { role } = require('../middlewares/role');
+const express = require('express')
+const router = express.Router()
+const ViewsController = require('../controllers/reviewController')
+const Shema = require('../validators/reviewValidation')
+const validate = require('../middlewares/validate')
+const { apiLimiter, strictLimiter } = require('../middlewares/rate-limiter')
+const { role } = require('../middlewares/role')
 
-
-
-const controller = new ViewsController();
-
-
+const controller = new ViewsController()
 
 /**
  * @swagger
@@ -60,7 +56,12 @@ const controller = new ViewsController();
  *       409:
  *         description: L'utilisateur a déjà laissé un avis
  */
-router.post('/:productId/review', strictLimiter, validate(Shema.createreViewSchema), controller.createreView);
+router.post(
+  '/:productId/review',
+  strictLimiter,
+  validate(Shema.createreViewSchema),
+  controller.createreView
+)
 
 /**
  * @swagger
@@ -81,7 +82,7 @@ router.post('/:productId/review', strictLimiter, validate(Shema.createreViewSche
  *       404:
  *         description: Aucun avis trouvé pour ce produit
  */
-router.get('/:productId/review', apiLimiter, controller.getAllreViews);
+router.get('/:productId/review', apiLimiter, controller.getAllreViews)
 
 /**
  * @swagger
@@ -124,7 +125,7 @@ router.get('/:productId/review', apiLimiter, controller.getAllreViews);
  *       403:
  *         description: Pas le droit de modifier l'avis d'un autre utilisateur
  */
-router.put('/:productId/review/:id', strictLimiter, controller.updateUsereView);
+router.put('/:productId/review/:id', strictLimiter, controller.updateUsereView)
 
 /**
  * @swagger
@@ -152,7 +153,11 @@ router.put('/:productId/review/:id', strictLimiter, controller.updateUsereView);
  *       403:
  *         description: Pas le droit de supprimer l'avis d'un autre utilisateur
  */
-router.delete('/:productId/review/:id', strictLimiter, controller.deleteUsereView)
+router.delete(
+  '/:productId/review/:id',
+  strictLimiter,
+  controller.deleteUsereView
+)
 
 /**
  * @swagger
@@ -190,7 +195,12 @@ router.delete('/:productId/review/:id', strictLimiter, controller.deleteUsereVie
  *       404:
  *         description: Avis non trouvé
  */
-router.delete('/review/:id', strictLimiter, role("admin"), controller.deletereViews);
+router.delete(
+  '/review/:id',
+  strictLimiter,
+  role('admin'),
+  controller.deletereViews
+)
 
 /**
  * @swagger
@@ -213,6 +223,11 @@ router.delete('/review/:id', strictLimiter, role("admin"), controller.deletereVi
  *       404:
  *         description: Avis non trouvé
  */
-router.put('/review/:id', strictLimiter, role("admin"), controller.updatereViews);
+router.put(
+  '/review/:id',
+  strictLimiter,
+  role('admin'),
+  controller.updatereViews
+)
 
-module.exports = router;
+module.exports = router

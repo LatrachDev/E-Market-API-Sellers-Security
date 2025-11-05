@@ -1,17 +1,17 @@
-const sharp = require('sharp');
-const path = require('path');
-const fs = require('fs');
+const sharp = require('sharp')
+const path = require('path')
+const fs = require('fs')
 
 class ImageService {
 
   constructor() {
-    this.baseDir = 'uploads/products';
+    this.baseDir = 'uploads/products'
     this.sizes = {
       thumbnail: { width: 150, height: 150 },
       small: { width: 300, height: 300 },
       medium: { width: 600, height: 600 },
-      large: { width: 1200, height: 1200 }
-    };
+      large: { width: 1200, height: 1200 },
+    }
   }
 
   /**
@@ -29,7 +29,7 @@ class ImageService {
 
     for (const dir of dirs) {
       if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+        fs.mkdirSync(dir, { recursive: true })
       }
     }
   }
@@ -50,7 +50,7 @@ class ImageService {
    */
   async processImage(file) {
     try {
-      await this.createDirectories();
+      await this.createDirectories()
 
       if (!file) throw new Error('File is missing');
 
@@ -77,36 +77,37 @@ class ImageService {
           url: `/uploads/products/original/${originalFilename}`,
           filename: originalFilename,
           originalName,
+          originalName,
           size: file.size,
           mimetype: file.mimetype,
-          isMain: true
-        }
-      };
+          isMain: true,
+        },
+      }
 
       // Generate resized versions
       for (const [sizeName, dimensions] of Object.entries(this.sizes)) {
-        const filename = this.generateFilename(originalName, sizeName);
-        const outputPath = path.join(this.baseDir, sizeName, filename);
+        const filename = this.generateFilename(originalName, sizeName)
+        const outputPath = path.join(this.baseDir, sizeName, filename)
 
         await sharp(input)
           .resize(dimensions.width, dimensions.height, {
             fit: 'inside',
-            withoutEnlargement: true
+            withoutEnlargement: true,
           })
           .jpeg({ quality: 85 })
-          .toFile(outputPath);
+          .toFile(outputPath)
 
         processedImages[sizeName] = {
           url: `/uploads/products/${sizeName}/${filename}`,
           filename,
+          filename,
           width: dimensions.width,
           height: dimensions.height,
-          size: fs.statSync(outputPath).size
-        };
+          size: fs.statSync(outputPath).size,
+        }
       }
 
-      return processedImages;
-
+      return processedImages
     } catch (error) {
       console.error('❌ Error processing image:', error);
       throw new Error(`Image processing failed: ${error.message}`);
@@ -153,9 +154,9 @@ class ImageService {
     try {
       for (const [size, data] of Object.entries(processedImages)) {
         if (data.filename) {
-          const filePath = path.join(this.baseDir, size, data.filename);
+          const filePath = path.join(this.baseDir, size, data.filename)
           if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+            fs.unlinkSync(filePath)
           }
         }
       }
@@ -178,19 +179,17 @@ class ImageService {
     await sharp(inputPath)
       .resize(config.width, config.height, {
         fit: 'inside',
-        withoutEnlargement: true
+        withoutEnlargement: true,
       })
       .jpeg({ quality: config.quality })
-      .toFile(outputPath);
+      .toFile(outputPath)
   }
 
   /**
    * Convert image to WebP
    */
   async convertToWebP(inputPath, outputPath, quality = 80) {
-    await sharp(inputPath)
-      .webp({ quality })
-      .toFile(outputPath);
+    await sharp(inputPath).webp({ quality }).toFile(outputPath)
   }
 
   /**
@@ -198,14 +197,14 @@ class ImageService {
    */
   async getImageMetadata(filePath) {
     try {
-      const metadata = await sharp(filePath).metadata();
+      const metadata = await sharp(filePath).metadata()
       return {
         width: metadata.width,
         height: metadata.height,
         format: metadata.format,
         size: metadata.size,
-        density: metadata.density
-      };
+        density: metadata.density,
+      }
     } catch (error) {
       console.error('❌ Error getting image metadata:', error);
       return null;

@@ -1,16 +1,20 @@
-const yup = require("yup");
+const yup = require('yup')
 
 const createProductSchema = yup.object({
   title: yup
     .string()
-    .required("Title is required")
-    .min(3, "Title must be at least 3 characters"),
-  description: yup.string().required("Description is required"),
-  price: yup.number().positive().required("Price is required"),
-  stock: yup.number().integer().required("Stock is required").min(0),
-  categories: yup.array(yup.string()).required("Category is required"),
-  images: yup.array().of(yup.string().url("Invalid image URL")).nullable().notRequired()
-});
+    .required('Title is required')
+    .min(3, 'Title must be at least 3 characters'),
+  description: yup.string().required('Description is required'),
+  price: yup.number().positive().required('Price is required'),
+  stock: yup.number().integer().required('Stock is required').min(0),
+  categories: yup.array(yup.string()).required('Category is required'),
+  images: yup
+    .array()
+    .of(yup.string().url('Invalid image URL'))
+    .nullable()
+    .notRequired(),
+})
 
 const updateProductSchema = yup.object({
   title: yup.string(),
@@ -18,7 +22,7 @@ const updateProductSchema = yup.object({
   price: yup.number().positive(),
   stock: yup.number().integer().min(0),
   cateories: yup.array().of(yup.string()),
-  images: yup.array().of(yup.string().url("Invalid image URL")).nullable(),
-});
+  images: yup.array().of(yup.string().url('Invalid image URL')).nullable(),
+})
 
-module.exports = { createProductSchema, updateProductSchema };
+module.exports = { createProductSchema, updateProductSchema }

@@ -1,5 +1,5 @@
-const EventEmitter = require('events');
+const EventEmitter = require('events')
 class NotificationEmitter extends EventEmitter {}
-const notificationEmitter = new NotificationEmitter();
+const notificationEmitter = new NotificationEmitter()
 
-module.exports = notificationEmitter;
+module.exports = notificationEmitter

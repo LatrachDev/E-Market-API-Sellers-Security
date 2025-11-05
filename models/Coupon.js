@@ -1,88 +1,87 @@
-const { required } = require('joi');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-const couponSchema = new mongoose.Schema({
+const couponSchema = new mongoose.Schema(
+  {
+    code: {
+      type: String,
+      required: [true, 'Coupon code is required'],
+      unique: true,
+      trim: true,
+      uppercase: true,
+    },
 
-  code: {
-    type: String,
-    required: [true, 'Coupon code is required'],
-    unique: true,
-    trim: true,
-    uppercase: true
-  },
+    type: {
+      type: String,
+      enum: ['percentage', 'fixed'],
+      required: [true, 'Coupon type is required'],
+      default: 'percentage',
+    },
 
-  type: {
-    type: String,
-    enum: ['percentage', 'fixed'],
-    required: [true, 'Coupon type is required'],
-    default: 'percentage'
-  },
+    discount: {
+      type: Number,
+      required: [true, 'Discount value is required'],
+      min: [1, 'Discount must be at least 1'],
+    },
 
-  discount: {
-    type: Number,
-    required: [true, 'Discount value is required'],
-    min: [1, 'Discount must be at least 1']
-  },
+    expirationDate: {
+      type: Date,
+      required: [true, 'Expiration date is required'],
+    },
 
-  expirationDate: {
-    type: Date,
-    required: [true, 'Expiration date is required']
-  },
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product',
+      // required: [true, 'Product ID is required'],
+      required: false, // ✅ le rendre optionnel
+    },
 
-  product_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-    // required: [true, 'Product ID is required'],
-        required: false, // ✅ le rendre optionnel
-
-  },
-
-  categories: [
-    {
+    categories: [
+      {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: [true, 'Category ID is required'],
-        index: true
+        index: true,
+      },
+    ],
+
+    seller: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'Seller ID is required'],
     },
-  ],
 
-  seller: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'Seller ID is required'],
+    usesLeft: {
+      type: Number,
+      required: [true, 'Number of uses is required'],
+      min: [0, 'Uses left cannot be negative'],
+    },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
-
-  usesLeft: {
-    type: Number,
-    required: [true, 'Number of uses is required'],
-    min: [0, 'Uses left cannot be negative']
-  },
-
-  isDeleted: {
-    type: Boolean,
-    default: false
-  },
-
-  deletedAt: {
-    type: Date,
-    default: null
+  {
+    timestamps: true,
+    versionKey: false, // removes the __v version field from documents
   }
-
-}, {
-  timestamps: true,
-  versionKey: false //removes the __v version field from documents
-});
+)
 
 // couponSchema.index({ code: 1 }, { unique: true }); // in db.. no two coupons can have the same code
 
 couponSchema.methods.decrementUse = async function () {
   if (this.usesLeft > 0) {
-    this.usesLeft -= 1;
-    await this.save();
+    this.usesLeft -= 1
+    await this.save()
   }
-  return this;
-};
+  return this
+}
 
-const Coupon = mongoose.model('Coupon', couponSchema);
+const Coupon = mongoose.model('Coupon', couponSchema)
 
-module.exports = Coupon;
+module.exports = Coupon
