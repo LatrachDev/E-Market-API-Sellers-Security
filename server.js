@@ -36,7 +36,6 @@ app.use(logger)
 app.use(helmet())
 app.use(cors(corsOptions))
 
-connectDB()
 
 // swagger
 const options = {
