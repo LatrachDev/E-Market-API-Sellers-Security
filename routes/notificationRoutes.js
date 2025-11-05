@@ -1,9 +1,8 @@
 // routes/notificationRoutes.js
-const express = require('express');
-const router = express.Router();
-const NotificationController = require('../controllers/notificationController');
-const controller = new NotificationController();
-
+const express = require('express')
+const router = express.Router()
+const NotificationController = require('../controllers/notificationController')
+const controller = new NotificationController()
 
 /**
  * @swagger
@@ -25,7 +24,7 @@ const controller = new NotificationController();
  *       401:
  *         description: Non authentifié
  */
-router.get('/',controller.getNotifications);
+router.get('/', controller.getNotifications)
 
 /**
  * @swagger
@@ -54,7 +53,7 @@ router.get('/',controller.getNotifications);
  *       404:
  *         description: Notification non trouvée
  */
-router.patch('/:id/read',controller.markAsRead);
+router.patch('/:id/read', controller.markAsRead)
 
 /**
  * @swagger
@@ -70,7 +69,7 @@ router.patch('/:id/read',controller.markAsRead);
  *       401:
  *         description: Non authentifié
  */
-router.patch('/read/all', controller.markAllAsRead);
+router.patch('/read/all', controller.markAllAsRead)
 
 /**
  * @swagger
@@ -95,8 +94,6 @@ router.patch('/read/all', controller.markAllAsRead);
  *       404:
  *         description: Notification non trouvée
  */
-router.delete('/:id', controller.deleteNotification);
+router.delete('/:id', controller.deleteNotification)
 
-
-
-module.exports = router;
+module.exports = router

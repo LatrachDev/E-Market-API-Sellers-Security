@@ -1,13 +1,13 @@
-const express = require("express");
+const express = require('express')
 const {
   createCoupon,
   getAllCoupons,
   getCouponById,
   updateCoupon,
   deleteCoupon,
-} = require("../controllers/CouponController");
-const { apiLimiter, strictLimiter } = require("../middlewares/rate-limiter");
-const router = express.Router();
+} = require('../controllers/CouponController')
+const { apiLimiter, strictLimiter } = require('../middlewares/rate-limiter')
+const router = express.Router()
 
 /**
  * @swagger
@@ -33,7 +33,7 @@ const router = express.Router();
  *           type: string
  *           format: date-time
  *           description: Expiration date of the coupon
- *         product_id:
+ *         productId:
  *           type: string
  *           nullable: true
  *           description: Identifier of the product the coupon applies to
@@ -63,7 +63,7 @@ const router = express.Router();
  *         type: "percentage"
  *         discount: 25
  *         expirationDate: "2025-12-31T23:59:59.000Z"
- *         product_id: "66f3e41c51a2a8e0d4f3a9b7"
+ *         productId: "66f3e41c51a2a8e0d4f3a9b7"
  *         categories:
  *           - "66efc2de13a0f680cc176012"
  *           - "66efc2de13a0f680cc176045"
@@ -79,7 +79,7 @@ const router = express.Router();
  *         - type
  *         - discount
  *         - expirationDate
- *         - product_id
+ *         - productId
  *         - categories
  *         - seller
  *         - usesLeft
@@ -96,7 +96,7 @@ const router = express.Router();
  *         expirationDate:
  *           type: string
  *           format: date-time
- *         product_id:
+ *         productId:
  *           type: string
  *         categories:
  *           type: array
@@ -112,7 +112,7 @@ const router = express.Router();
  *         type: "fixed"
  *         discount: 10
  *         expirationDate: "2025-01-31T23:59:59.000Z"
- *         product_id: "66f3e41c51a2a8e0d4f3a9b7"
+ *         productId: "66f3e41c51a2a8e0d4f3a9b7"
  *         categories:
  *           - "66efc2de13a0f680cc176012"
  *         seller: "66eabf7f8664310e1b123d45"
@@ -132,7 +132,7 @@ const router = express.Router();
  *         expirationDate:
  *           type: string
  *           format: date-time
- *         product_id:
+ *         productId:
  *           type: string
  *           nullable: true
  *         categories:
@@ -210,7 +210,7 @@ const router = express.Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/", strictLimiter, createCoupon);
+router.post('/', strictLimiter, createCoupon)
 
 /**
  * @swagger
@@ -232,7 +232,7 @@ router.post("/", strictLimiter, createCoupon);
  *       500:
  *         description: Internal server error
  */
-router.get("/", apiLimiter, getAllCoupons);
+router.get('/', apiLimiter, getAllCoupons)
 
 /**
  * @swagger
@@ -263,7 +263,7 @@ router.get("/", apiLimiter, getAllCoupons);
  *       500:
  *         description: Internal server error
  */
-router.get("/:id", apiLimiter, getCouponById);
+router.get('/:id', apiLimiter, getCouponById)
 
 /**
  * @swagger
@@ -304,7 +304,7 @@ router.get("/:id", apiLimiter, getCouponById);
  *       500:
  *         description: Internal server error
  */
-router.put("/:id", strictLimiter, updateCoupon);
+router.put('/:id', strictLimiter, updateCoupon)
 
 /**
  * @swagger
@@ -337,6 +337,6 @@ router.put("/:id", strictLimiter, updateCoupon);
  *       500:
  *         description: Internal server error
  */
-router.delete("/:id", strictLimiter, deleteCoupon);
+router.delete('/:id', strictLimiter, deleteCoupon)
 
-module.exports = router;
+module.exports = router

@@ -1,5 +1,5 @@
-const User = require("../models/user");
-const { hashPassword, comparePassword } = require('../services/hash');
+const User = require('../models/user')
+const { hashPassword } = require('../services/hash')
 
 /**
  * @swagger
@@ -40,14 +40,14 @@ const { hashPassword, comparePassword } = require('../services/hash');
 
 async function getUsers(req, res, next) {
   try {
-    const users = await User.find();
+    const users = await User.find()
     res.status(200).json({
-      message: "all users found",
-      users: users,
-    });
+      message: 'all users found',
+      users,
+    })
   } catch (error) {
     // console.error(error);
-    next(error);
+    next(error)
   }
 }
 
@@ -74,17 +74,17 @@ async function getUsers(req, res, next) {
 
 async function getOneUser(req, res, next) {
   try {
-    const id = req.params.id;
-    const user = await User.findById(id);
+    const id = req.params.id
+    const user = await User.findById(id)
     if (!user) {
-      res.status(400).json({ message: "user not found" });
+      res.status(400).json({ message: 'user not found' })
     }
     res.status(200).json({
-      message: "user found succesfully",
-      user: user,
-    });
+      message: 'user found succesfully',
+      user,
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
@@ -112,25 +112,29 @@ async function getOneUser(req, res, next) {
 
 async function createUser(req, res, next) {
   try {
-    const { fullname, email, password, role } = req.body;
-    const existingUser = await User.findOne({ email });
+    const { fullname, email, password, role } = req.body
+    const existingUser = await User.findOne({ email })
     if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).json({ message: 'Email already exists' })
     }
 
-    const hashedPassword = await hashPassword(password);
+    const hashedPassword = await hashPassword(password)
 
-    const createdUser = await User.create({ fullname, email, password: hashedPassword, role });
+    const createdUser = await User.create({
+      fullname,
+      email,
+      password: hashedPassword,
+      role,
+    })
 
     res.status(201).json({
       success: true,
       status: 200,
-      message: "user created successfully",
+      message: 'user created successfully',
       user: createdUser,
-    });
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
@@ -156,62 +160,68 @@ async function createUser(req, res, next) {
  */
 async function deleteUser(req, res, next) {
   try {
-    const user = User.findById();
-    await User.deleteOne(user);
-    res.status(200).json("user deleted successfully");
+    const user = User.findById()
+    await User.deleteOne(user)
+    res.status(200).json('user deleted successfully')
   } catch (error) {
     // throw error;
-    next(error);
+    next(error)
   }
 }
 
 async function promoteUserToSeller(req, res, next) {
   try {
-    const userId = req.params.id;
-    const user = await User.findById(userId);
+    const userId = req.params.id
+    const user = await User.findById(userId)
     if (!user) {
       return res.status(404).json({
         success: false,
         status: 404,
-        message: "User not found",
-
-      });
+        message: 'User not found',
+      })
     }
-    user.role = "seller";
-    await user.save();
+    user.role = 'seller'
+    await user.save()
     res.status(200).json({
       success: true,
       status: 200,
-      message: "User promoted to seller",
-      data: user
-    });
+      message: 'User promoted to seller',
+      data: user,
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
 async function demoteSellerToUser(req, res, next) {
   try {
-    const userId = req.params.id;
-    const user = await User.findById(userId);
+    const userId = req.params.id
+    const user = await User.findById(userId)
     if (!user) {
       return res.status(404).json({
         success: false,
         status: 404,
-        message: "User not found",
-      });
+        message: 'User not found',
+      })
     }
-    user.role = "user";
-    await user.save();
+    user.role = 'user'
+    await user.save()
     res.status(200).json({
       success: true,
       status: 200,
-      message: "Seller demoted to user",
-      data: user
-    });
+      message: 'Seller demoted to user',
+      data: user,
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
-module.exports = { getUsers, getOneUser, createUser, deleteUser, promoteUserToSeller, demoteSellerToUser };
+module.exports = {
+  getUsers,
+  getOneUser,
+  createUser,
+  deleteUser,
+  promoteUserToSeller,
+  demoteSellerToUser,
+}
