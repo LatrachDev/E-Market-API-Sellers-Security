@@ -24,5 +24,10 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 });
 
+// indexes to speed up search and filtering
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1 });
+userSchema.index({ createdAt: 1 });
+userSchema.index({ updatedAt: 1 });
 
 module.exports = mongoose.model('User', userSchema);

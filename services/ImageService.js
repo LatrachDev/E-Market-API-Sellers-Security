@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 class ImageService {
-  
+
   constructor() {
     this.baseDir = 'uploads/products';
     this.sizes = {
@@ -15,16 +15,16 @@ class ImageService {
   }
 
   /**
-   * Create directories for different image sizes
+   * Ensure upload directories exist
    */
   async createDirectories() {
     const dirs = [
       this.baseDir,
       path.join(this.baseDir, 'original'),
-      path.join(this.baseDir, 'thumbnails'),
+      path.join(this.baseDir, 'thumbnail'),
       path.join(this.baseDir, 'small'),
       path.join(this.baseDir, 'medium'),
-      path.join(this.baseDir, 'large')
+      path.join(this.baseDir, 'large'),
     ];
 
     for (const dir of dirs) {
@@ -35,30 +35,40 @@ class ImageService {
   }
 
   /**
-   * Generate unique filename
+   * Generate a unique file name
    */
   generateFilename(originalName, size = 'original') {
     const ext = path.extname(originalName);
     const name = path.basename(originalName, ext);
     const timestamp = Date.now();
     const random = Math.round(Math.random() * 1E9);
-    
     return `${name}-${timestamp}-${random}-${size}${ext}`;
   }
 
   /**
-   * Process single image and create multiple sizes
+   * Process a single image (with multiple sizes)
    */
-  async processImage(file, productId = null) {
+  async processImage(file) {
     try {
       await this.createDirectories();
 
-      const originalName = file.originalname;
+      if (!file) throw new Error('File is missing');
+
+      // Support both memoryStorage (buffer) and diskStorage (path)
+      const input = file.buffer
+        ? file.buffer
+        : (file.path && fs.existsSync(file.path))
+          ? fs.readFileSync(file.path)
+          : null;
+
+      if (!input) throw new Error('Invalid input: file buffer/path not found');
+
+      const originalName = file.originalname || 'unnamed';
       const originalFilename = this.generateFilename(originalName, 'original');
       const originalPath = path.join(this.baseDir, 'original', originalFilename);
 
       // Save original image
-      await sharp(file.buffer)
+      await sharp(input)
         .jpeg({ quality: 90 })
         .toFile(originalPath);
 
@@ -66,19 +76,19 @@ class ImageService {
         original: {
           url: `/uploads/products/original/${originalFilename}`,
           filename: originalFilename,
-          originalName: originalName,
+          originalName,
           size: file.size,
           mimetype: file.mimetype,
           isMain: true
         }
       };
 
-      // Generate different sizes
+      // Generate resized versions
       for (const [sizeName, dimensions] of Object.entries(this.sizes)) {
         const filename = this.generateFilename(originalName, sizeName);
         const outputPath = path.join(this.baseDir, sizeName, filename);
 
-        await sharp(file.buffer)
+        await sharp(input)
           .resize(dimensions.width, dimensions.height, {
             fit: 'inside',
             withoutEnlargement: true
@@ -88,7 +98,7 @@ class ImageService {
 
         processedImages[sizeName] = {
           url: `/uploads/products/${sizeName}/${filename}`,
-          filename: filename,
+          filename,
           width: dimensions.width,
           height: dimensions.height,
           size: fs.statSync(outputPath).size
@@ -98,7 +108,7 @@ class ImageService {
       return processedImages;
 
     } catch (error) {
-      console.error('Error processing image:', error);
+      console.error('❌ Error processing image:', error);
       throw new Error(`Image processing failed: ${error.message}`);
     }
   }
@@ -106,45 +116,38 @@ class ImageService {
   /**
    * Process multiple images
    */
-  async processMultipleImages(files) {
+  async processMultipleImages(files = []) {
     const results = [];
-    
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const processed = await this.processImage(file);
-      
-      // Set first image as main
-      if (i === 0) {
-        processed.original.isMain = true;
-      } else {
-        processed.original.isMain = false;
-      }
-      
+      processed.original.isMain = i === 0; // First image is main
       results.push(processed);
     }
-    
+
     return results;
   }
 
   /**
-   * Get all image URLs for a product
+   * Get all image URLs (with optional base URL)
    */
   getImageUrls(processedImages, baseUrl = 'http://localhost:3000') {
     const urls = {};
-    
+
     for (const [size, data] of Object.entries(processedImages)) {
       if (data.url) {
-        urls[size] = data.url.startsWith('/') 
-          ? `${baseUrl}${data.url}` 
+        urls[size] = data.url.startsWith('/')
+          ? `${baseUrl}${data.url}`
           : data.url;
       }
     }
-    
+
     return urls;
   }
 
   /**
-   * Delete image files
+   * Delete all image files for a product
    */
   async deleteImageFiles(processedImages) {
     try {
@@ -157,21 +160,19 @@ class ImageService {
         }
       }
     } catch (error) {
-      console.error('Error deleting image files:', error);
+      console.error('❌ Error deleting image files:', error);
     }
   }
 
   /**
-   * Optimize existing image
+   * Optimize image (resize and recompress)
    */
   async optimizeImage(inputPath, outputPath, options = {}) {
     const defaultOptions = {
       width: 800,
       height: 600,
-      quality: 85,
-      format: 'jpeg'
+      quality: 85
     };
-
     const config = { ...defaultOptions, ...options };
 
     await sharp(inputPath)
@@ -184,7 +185,7 @@ class ImageService {
   }
 
   /**
-   * Convert to WebP format
+   * Convert image to WebP
    */
   async convertToWebP(inputPath, outputPath, quality = 80) {
     await sharp(inputPath)
@@ -193,7 +194,7 @@ class ImageService {
   }
 
   /**
-   * Get image metadata
+   * Get metadata (size, width, height, etc.)
    */
   async getImageMetadata(filePath) {
     try {
@@ -206,7 +207,7 @@ class ImageService {
         density: metadata.density
       };
     } catch (error) {
-      console.error('Error getting image metadata:', error);
+      console.error('❌ Error getting image metadata:', error);
       return null;
     }
   }
