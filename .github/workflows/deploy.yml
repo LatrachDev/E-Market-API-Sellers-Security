@@ -6,9 +6,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
     services:
       mongo:
         image: mongo:latest
@@ -22,7 +19,7 @@ jobs:
       - run: npm ci
       - name: Run tests
         env:
-          DB_URI: mongodb://localhost:27017/e_market_test
+          MONGO_URI: mongodb://localhost:27017/e_market_test
           JWT_SECRET: test_secret_jwt
           NODE_ENV: test
           PORT: 3001
@@ -42,7 +39,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./dockerfile
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/e-market-api:latest
 
@@ -53,7 +50,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-        # command to create credentials in azure ssh az ad sp create-for-rbac --name "github-actions-deploy" --role contributor --scopes /subscriptions/0806ab2b-06ad-4917-92cf-257b47c2cb29/resourceGroups/mern-api-francecentral --sdk-auth
+        # command to create credentials in azure ssh az ad sp create-for-rbac --name "github-actions-deploy" --role contributor --scopes /subscriptions/0806ab2b-06ad-4917-92cf-257b47c2cb29/resourceGroups/E-Market --sdk-auth
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2

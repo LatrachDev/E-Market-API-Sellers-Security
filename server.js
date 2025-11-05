@@ -47,7 +47,7 @@ const options = {
     },
     servers: [
       {
-        url: `http://localhost:${process.env.PORT || 6000}`,
+        url: `http://localhost:${process.env.PORT || 3002}`,
       },
     ],
     components: {
@@ -94,7 +94,7 @@ async function run() {
 
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 6000
+const PORT = process.env.PORT || 3002
 app.listen(PORT, () => {
   run()
   console.log(`Server running on port ${PORT}`)
