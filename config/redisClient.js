@@ -1,13 +1,16 @@
-const redis = require("redis");
+const { createClient } = require("redis");
 
-const client = redis.createClient({
-  host: "127.0.0.1", // ou l'adresse de ton serveur Redis (ex: Azure, Heroku)
-  port: 6379,
+const client = createClient({
+  socket: {
+    host: "redis", // 🔥 nom du service défini dans docker-compose.yml
+    port: 6379,
+  },
 });
 
-client.on("error", (err) => console.error(" Redis Error:", err));
-client.on("connect", () => console.log(" Connected to Redis"));
+client.on("error", (err) => console.error("❌ Redis Client Error:", err));
 
-client.connect();
+client.connect()
+  .then(() => console.log("✅ Connected to Redis"))
+  .catch((err) => console.error("❌ Redis connection failed:", err));
 
 module.exports = client;

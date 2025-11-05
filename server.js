@@ -25,10 +25,10 @@ const auth = require("./middlewares/auth");
 
 const { authLimiter, apiLimiter } = require('./middlewares/rate-limiter');
 const { corsOptions } = require('./middlewares/security');
-const cors = require('cors');
+const cors = require('cors');  
 const helmet = require('helmet');
 const compression = require('compression');
-const { cacheMiddleware } = require('./middlewares/cache');
+
 const cacheManager=require('./middlewares/cacheredis');
 
 const connectDB = require("./config/db");
