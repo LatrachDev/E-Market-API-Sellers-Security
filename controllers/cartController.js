@@ -61,6 +61,7 @@ async function addToCart(req, res) {
     await cart.save()
 
     res.status(200).json({
+      status: 200,
       message: 'Produit ajouté au panier avec succès',
       cart,
     })

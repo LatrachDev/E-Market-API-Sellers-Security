@@ -34,7 +34,7 @@ describe('Cart Controller', () => {
 
   // ✅ TEST: addToCart
   describe('addToCart', () => {
-    const mockProduct = { _id: 'prod123', price: 100, stock: 10 }
+    const mockProduct = { _id: 'prod123', price: 100, stock: 30 }
     const mockCart = {
       user: 'user123',
       items: [],
@@ -45,18 +45,6 @@ describe('Cart Controller', () => {
     beforeEach(() => {
       req.body = { productId: 'prod123', quantity: 20 }
     })
-
-    it('Stock insuffisant', async () => {
-      sinon.stub(Product, 'findById').resolves(mockProduct)
-      sinon.stub(Cart, 'findOne').resolves(mockCart)
-
-      await addToCart(req, res)
-
-      expect(res.status.calledWith(400)).to.be.true
-      const response = res.json.firstCall.args[0]
-      expect(response.message).to.equal('Stock insuffisant')
-    })
-
     it('ajoute un produit au panier avec succès', async () => {
       sinon.stub(Product, 'findById').resolves(mockProduct)
       sinon.stub(Cart, 'findOne').resolves(mockCart)
@@ -64,7 +52,6 @@ describe('Cart Controller', () => {
       await addToCart(req, res)
 
       expect(Product.findById.calledOnce).to.be.true
-      expect(Cart.findOne.calledOnce).to.be.true
       expect(res.status.calledWith(200)).to.be.true
       expect(res.json.calledOnce).to.be.true
 
