@@ -75,11 +75,7 @@ app.use('/coupons', auth, apiLimiter, couponRoutes)
 
 app.use('/uploads', express.static('uploads'))
 const specs = swaggerJsdoc(options)
-app.use(
-  '/api-docs',
-  swaggerUi.serve,
-  swaggerUi.setup(specs)
-)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
 
 app.use(require('./middlewares/notFound'))
 
