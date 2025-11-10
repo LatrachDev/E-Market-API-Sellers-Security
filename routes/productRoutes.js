@@ -17,6 +17,8 @@ const {
   updateProductSchema,
 } = require('../validators/productValidation')
 
+const auth = require("../middlewares/auth")
+
 const {
   checkProductOwnership,
 } = require('../middlewares/checkProductOwnership')
@@ -116,7 +118,7 @@ router.post(
   '/',
   strictLimiter,
   upload.array('images', 5),
-  validate(createProductSchema),
+  validate(createProductSchema),auth,
   createProduct
 )
 
@@ -162,7 +164,7 @@ router.post(
  */
 router.put(
   '/:id',
-  strictLimiter,
+  strictLimiter,auth,
   checkProductOwnership,
   upload.array('images', 5),
   validate(updateProductSchema),
@@ -188,8 +190,8 @@ router.put(
  *       500:
  *         description: Server error
  */
-router.delete('/:id', checkProductOwnership, deleteProduct)
-router.patch('/:id/activate', checkProductOwnership, activateProduct)
-router.patch('/:id/deactivate', checkProductOwnership, deactivationProduct)
+router.delete('/:id',auth, checkProductOwnership, deleteProduct)
+router.patch('/:id/activate',auth, checkProductOwnership, activateProduct)
+router.patch('/:id/deactivate',auth, checkProductOwnership, deactivationProduct)
 
 module.exports = router

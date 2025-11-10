@@ -63,7 +63,7 @@ const options = {
   apis: ['./routes/*.js', './controllers/*.js', './models/*.js'],
 }
 app.use('/users', auth, apiLimiter, userRoutes)
-app.use('/products', auth, apiLimiter, productRoutes)
+app.use('/products', apiLimiter, productRoutes)
 app.use('/categories', auth, apiLimiter, categoryRoutes)
 app.use('/auth', authLimiter, authRoutes)
 app.use('/profiles', auth, apiLimiter, profileRoutes)
